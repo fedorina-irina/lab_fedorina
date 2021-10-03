@@ -21,15 +21,22 @@ Pipe InputPipe()
 	return p;
 }
 
-void PrintPipe()
+void PrintPipe(Pipe p)
 {
 	cout << "id: " << p.id
-		<< "lenght: " << p.lenght
-		<< "diametr: " << p.diametr << endl;
+		<< "\nlenght: " << p.lenght
+		<< "\ndiametr: " << p.diametr << endl;
+}
+
+void EditPipe(Pipe& p)
+{
+
 }
 
 int main()
-{
-	
-return 0;
+{	
+
+	Pipe pipe = InputPipe();
+	PrintPipe(pipe);
+	return 0;
 }
