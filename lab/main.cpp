@@ -10,6 +10,15 @@ struct Pipe
 	bool status;
 };
 
+struct CStation
+{
+	int id;
+	string name;
+	int shop;
+	int workshop;
+	double e;
+};
+
 Pipe InputPipe()
 {
 	Pipe p;
