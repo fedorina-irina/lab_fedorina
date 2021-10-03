@@ -21,6 +21,13 @@ Pipe InputPipe()
 	return p;
 }
 
+void PrintPipe()
+{
+	cout << "id: " << p.id
+		<< "lenght: " << p.lenght
+		<< "diametr: " << p.diametr << endl;
+}
+
 int main()
 {
 	
