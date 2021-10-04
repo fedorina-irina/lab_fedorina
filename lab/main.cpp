@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -7,7 +8,7 @@ struct Pipe
 	int id;
 	double lenght;
 	double diametr;
-	bool status;
+	int status;
 };
 
 struct CStation
@@ -27,6 +28,8 @@ Pipe InputPipe()
 	cin >> p.lenght;
 	cout << "Input pipe diametr, please: ";
 	cin >> p.diametr;
+	cout << "Indicate the state of the pipe (0 - pipe under repair; 1 - pipe is working): ";
+	cin >> p.status;
 	return p;
 }
 
@@ -47,22 +50,37 @@ CStation InputStation()
 
 void PrintPipe(Pipe p)
 {
-	cout << "id: " << p.id
-		<< "\nlenght: " << p.lenght
-		<< "\ndiametr: " << p.diametr << endl;
+	cout << "Pipe id: " << p.id
+		<< "\nPipe lenght: " << p.lenght
+		<< "\nPipe diametr: " << p.diametr << endl;
+	if (p.status == 1)
+		cout << "Pipe status:  pipe is working" << endl;
+	else
+		cout << "Pipe status:  pipe under repair" << endl;
 }
 
 void PrintStation(CStation cs)
 {
-	cout << "id: " << cs.id
-		<< "\nname: " << cs.name
-		<< "\nshops: " << cs.shop 
-		<< "\nworkshops: " << cs.workshop 
-		<< "\nefficiency indicator: " << cs.e << endl;
+	cout << "\nCompressor Station id: " << cs.id
+		<< "\nCompressor Station name: " << cs.name
+		<< "\nCompressor Station shops: " << cs.shop 
+		<< "\nCompressor Station workshops: " << cs.workshop 
+		<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
 }
 
 void EditPipe(Pipe& p)
 {
+	string change;
+	cout << "Do you want to change pipe status? (yes / no) :\n";
+	cin >> change;
+
+	if (change == "yes")
+	{
+		if (p.status == 1)
+		p.status = 0;
+		else
+		p.status = 1;
+	}
 
 }
 
@@ -75,8 +93,41 @@ void PrintMenu()
 		<< "5. Edit Station" << endl
 		<< "6. Save" << endl
 		<< "7. Download" << endl
-		<< "0. Exit" << endl;
+		<< "0. Exit" << endl
+		<< "Choose action: "<< endl;
 
+}
+
+void SavePipe(Pipe p)
+{
+	ofstream fout;
+	fout.open("pipe.txt", ios::out);
+	if (fout.is_open())
+	{
+		fout << "pipe id: " << p.id
+			<< "\npipe lenght: " << p.lenght
+			<< "\npipe diametr: " << p.diametr << endl;
+		if (p.status == 1)
+			fout << "pipe status:  pipe is working" << endl;
+		else
+			fout << "pipe status:  pipe under repair" << endl;
+		fout.close();
+	}
+}
+
+void SaveStation(CStation cs)
+{
+	ofstream fout;
+	fout.open("station.txt", ios::out);
+	if (fout.is_open())
+	{
+		fout << "Compressor Station id: " << cs.id
+			<< "\nCompressor Station name: " << cs.name
+			<< "\nCompressor Station shops: " << cs.shop
+			<< "\nCompressor Station workshops: " << cs.workshop
+			<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
+		fout.close();
+	}
 }
 
 int main()
@@ -84,60 +135,65 @@ int main()
 	Pipe pipe;
 	CStation cs;
 
-		while (1)
+	while (1)
+	{
+		PrintMenu();
+		int i = 0;
+		cin >> i;
+		switch (i)
 		{
-			PrintMenu();
-			int i = 0;
-			cin >> i;
-			switch (i)
-			{
-			case 1:
-			{
-				pipe = InputPipe();
-				break;
-			}
-			case 2:
-			{
-				cs = InputStation();
-				break;
-			}
-			case 3:
-			{
-				PrintPipe(pipe);
-
-				PrintStation(cs);
-				break;
-			}
-			case 4:
-			{
-
-				break;
-			}
-			case 5:
-			{
-
-				break;
-			}
-			case 6:
-			{
-
-				break;
-			}
-			case 7:
-			{
-
-				break;
-			}
-			case 0:
-			{
-
-				break;
-			}
-			}
+		case 1:
+		{
+			system("cls");
+			pipe = InputPipe();
+			break;
 		}
-	PrintPipe(pipe);
+		case 2:
+		{
+			system("cls");
+			cs = InputStation();
+			break;
+		}
+		case 3:
+		{
+			system("cls");
+			PrintPipe(pipe);
+			PrintStation(cs);
+			break;
+		}
+		case 4:
+		{
+			system("cls");
+			EditPipe(pipe);
+			break;
+		}
+		case 5:
+		{
+			system("cls");
 
-	PrintStation(cs);
+			break;
+		}
+		case 6:
+		{
+			system("cls");
+			SavePipe(pipe);
+			SaveStation(cs);
+			break;
+		}
+		case 7:
+		{
+			system("cls");
+
+			break;
+		}
+		case 0:
+		{
+			return 0;
+		}
+
+
+		}
+	}
 	
 	return 0;
 }

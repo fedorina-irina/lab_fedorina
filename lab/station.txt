@@ -1,0 +1,5 @@
+Compressor Station id: -858993460
+Compressor Station name: 
+Compressor Station shops: -858993460
+Compressor Station workshops: -858993460
+Compressor Station efficiency indicator: -9.25596e+61
