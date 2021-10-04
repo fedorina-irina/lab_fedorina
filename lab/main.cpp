@@ -41,7 +41,7 @@ CStation InputStation()
 	cout << "How many workshops at the compressor station? ";
 	cin >> cs.workshop;
 	cout << "Input compressor station efficiency indicator, please: ";
-	cin >> cs.workshop;
+	cin >> cs.e;
 	return cs;
 }
 
@@ -50,6 +50,15 @@ void PrintPipe(Pipe p)
 	cout << "id: " << p.id
 		<< "\nlenght: " << p.lenght
 		<< "\ndiametr: " << p.diametr << endl;
+}
+
+void PrintStation(CStation cs)
+{
+	cout << "id: " << cs.id
+		<< "\nname: " << cs.name
+		<< "\nshops: " << cs.shop 
+		<< "\nworkshops: " << cs.workshop 
+		<< "\nefficiency indicator: " << cs.e << endl;
 }
 
 void EditPipe(Pipe& p)
