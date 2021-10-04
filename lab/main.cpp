@@ -68,23 +68,75 @@ void EditPipe(Pipe& p)
 
 void PrintMenu()
 {
-	cout << "1. Добавить трубу" << endl
-		<< "2. Добавить КС" << endl
-		<< "3. Просмотр всех объектов" << endl
-		<< "4. Редактировать трубу" << endl
-		<< "5. Редавтировать КС" << endl
-		<< "6. Сохранить" << endl
-		<< "7. Загрузить" << endl
-		<< "0. Выход" << endl;
+	cout << "1. Input Pipe" << endl
+		<< "2. Input Compressor Station" << endl
+		<< "3. Print Objects" << endl
+		<< "4. Edit Pipe" << endl
+		<< "5. Edit Station" << endl
+		<< "6. Save" << endl
+		<< "7. Download" << endl
+		<< "0. Exit" << endl;
 
 }
 
 int main()
-{	
-	Pipe pipe = InputPipe();
+{
+	Pipe pipe;
+	CStation cs;
+
+		while (1)
+		{
+			PrintMenu();
+			int i = 0;
+			cin >> i;
+			switch (i)
+			{
+			case 1:
+			{
+				pipe = InputPipe();
+				break;
+			}
+			case 2:
+			{
+				cs = InputStation();
+				break;
+			}
+			case 3:
+			{
+				PrintPipe(pipe);
+
+				PrintStation(cs);
+				break;
+			}
+			case 4:
+			{
+
+				break;
+			}
+			case 5:
+			{
+
+				break;
+			}
+			case 6:
+			{
+
+				break;
+			}
+			case 7:
+			{
+
+				break;
+			}
+			case 0:
+			{
+
+				break;
+			}
+			}
+		}
 	PrintPipe(pipe);
-	
-	CStation cs = InputStation();
+
 	PrintStation(cs);
 	
 	return 0;
