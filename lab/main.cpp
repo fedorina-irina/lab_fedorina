@@ -153,9 +153,25 @@ Pipe LoadPipe()
 		fin >> p.lenght;
 		fin >> p.diametr;
 		fin >> p.status;
-		fin.close;
 	}
+	fin.close();
 	return p;
+}
+
+CStation LoadStation()
+{
+	CStation cs;
+	ifstream fin;
+	fin.open("station.txt", ios::in);
+	if (fin.is_open())
+	{
+		fin >> cs.id;
+		fin >> cs.name;
+		fin >> cs.shop;
+		fin >> cs.workshop;
+	}
+	fin.close();
+	return cs;
 }
 
 int main()
@@ -211,7 +227,7 @@ int main()
 		case 7:
 		{
 			system("cls");
-
+			LoadPipe(pipe);
 			break;
 		}
 		case 0:
