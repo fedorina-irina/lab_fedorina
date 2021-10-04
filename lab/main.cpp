@@ -30,6 +30,21 @@ Pipe InputPipe()
 	return p;
 }
 
+CStation InputStation()
+{
+	CStation cs;
+	cs.id = 0;
+	cout << "Input compressor station name, please: ";
+	cin >> cs.name;
+	cout << "How many shops at the compressor station? ";
+	cin >> cs.shop;
+	cout << "How many workshops at the compressor station? ";
+	cin >> cs.workshop;
+	cout << "Input compressor station efficiency indicator, please: ";
+	cin >> cs.workshop;
+	return cs;
+}
+
 void PrintPipe(Pipe p)
 {
 	cout << "id: " << p.id
