@@ -66,10 +66,26 @@ void EditPipe(Pipe& p)
 
 }
 
+void PrintMenu()
+{
+	cout << "1. Добавить трубу" << endl
+		<< "2. Добавить КС" << endl
+		<< "3. Просмотр всех объектов" << endl
+		<< "4. Редактировать трубу" << endl
+		<< "5. Редавтировать КС" << endl
+		<< "6. Сохранить" << endl
+		<< "7. Загрузить" << endl
+		<< "0. Выход" << endl;
+
+}
+
 int main()
 {	
-
 	Pipe pipe = InputPipe();
 	PrintPipe(pipe);
+	
+	CStation cs = InputStation();
+	PrintStation(cs);
+	
 	return 0;
 }
