@@ -84,6 +84,19 @@ void EditPipe(Pipe& p)
 
 }
 
+void EditStation(CStation& cs)
+{
+	string change;
+	cout << "Do you want to launch another workshop or to stop one workshop? (launch / stop) :\n";
+	cin >> change;
+
+	if (change == "launch")
+		cs.workshop++;
+	else
+		cs.workshop--;
+
+}
+
 void PrintMenu()
 {
 	cout << "1. Input Pipe" << endl
@@ -170,7 +183,7 @@ int main()
 		case 5:
 		{
 			system("cls");
-
+			EditStation(cs);
 			break;
 		}
 		case 6:
