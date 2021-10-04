@@ -94,7 +94,6 @@ void EditStation(CStation& cs)
 		cs.workshop++;
 	else
 		cs.workshop--;
-
 }
 
 void PrintMenu()
@@ -141,6 +140,22 @@ void SaveStation(CStation cs)
 			<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
 		fout.close();
 	}
+}
+
+Pipe LoadPipe()
+{
+	Pipe p;
+	ifstream fin;
+	fin.open("pipe.txt", ios::in);
+	if (fin.is_open())
+	{
+		fin >> p.id;
+		fin >> p.lenght;
+		fin >> p.diametr;
+		fin >> p.status;
+		fin.close;
+	}
+	return p;
 }
 
 int main()
