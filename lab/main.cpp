@@ -20,15 +20,28 @@ struct CStation
 	double e;
 };
 
+int GetCorrectNumber(int min, int max)
+{
+	int x;
+	while ((cin >> x).fail() || x < min || x > max)
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "Type number (" << min << " - " << max << "): ";
+	} 
+	return x;
+}
+
 Pipe InputPipe()
 {
 	Pipe p;
-	p.id = 0;
+	cout << "Input pipe id, please: ";
+	cin >> p.id;
 	cout << "Input pipe lenght, please: ";
 	cin >> p.lenght;
 	cout << "Input pipe diametr, please: ";
 	cin >> p.diametr;
-	cout << "Indicate the state of the pipe (0 - pipe under repair; 1 - pipe is working): ";
+	cout << "Indicate the state of the pipe (0 - pipe under repair ; 1 - pipe is working): ";
 	cin >> p.status;
 	return p;
 }
@@ -36,7 +49,8 @@ Pipe InputPipe()
 CStation InputStation()
 {
 	CStation cs;
-	cs.id = 0;
+	cout << "Input compressor station id, please: ";
+	cin >> cs.id;
 	cout << "Input compressor station name, please: ";
 	cin >> cs.name;
 	cout << "How many shops at the compressor station? ";
@@ -52,11 +66,8 @@ void PrintPipe(Pipe p)
 {
 	cout << "Pipe id: " << p.id
 		<< "\nPipe lenght: " << p.lenght
-		<< "\nPipe diametr: " << p.diametr << endl;
-	if (p.status == 1)
-		cout << "Pipe status:  pipe is working" << endl;
-	else
-		cout << "Pipe status:  pipe under repair" << endl;
+		<< "\nPipe diametr: " << p.diametr
+		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " <<  p.status << endl;
 }
 
 void PrintStation(CStation cs)
@@ -75,13 +86,7 @@ void EditPipe(Pipe& p)
 	cin >> change;
 
 	if (change == "yes")
-	{
-		if (p.status == 1)
-		p.status = 0;
-		else
-		p.status = 1;
-	}
-
+			p.status = (!p.status);
 }
 
 void EditStation(CStation& cs)
@@ -107,7 +112,6 @@ void PrintMenu()
 		<< "7. Download" << endl
 		<< "0. Exit" << endl
 		<< "Choose action: "<< endl;
-
 }
 
 void SavePipe(Pipe p)
@@ -116,13 +120,10 @@ void SavePipe(Pipe p)
 	fout.open("pipe.txt", ios::out);
 	if (fout.is_open())
 	{
-		fout << "pipe id: " << p.id
-			<< "\npipe lenght: " << p.lenght
-			<< "\npipe diametr: " << p.diametr << endl;
-		if (p.status == 1)
-			fout << "pipe status:  pipe is working" << endl;
-		else
-			fout << "pipe status:  pipe under repair" << endl;
+		fout << p.id << endl
+			<< p.lenght << endl
+			<< p.diametr << endl
+			<< p.status << endl;
 		fout.close();
 	}
 }
@@ -133,11 +134,11 @@ void SaveStation(CStation cs)
 	fout.open("station.txt", ios::out);
 	if (fout.is_open())
 	{
-		fout << "Compressor Station id: " << cs.id
-			<< "\nCompressor Station name: " << cs.name
-			<< "\nCompressor Station shops: " << cs.shop
-			<< "\nCompressor Station workshops: " << cs.workshop
-			<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
+		fout << cs.id << endl
+			<< cs.name << endl
+			<< cs.shop << endl
+			<< cs.workshop << endl
+			<< cs.e << endl;
 		fout.close();
 	}
 }
@@ -169,6 +170,7 @@ CStation LoadStation()
 		fin >> cs.name;
 		fin >> cs.shop;
 		fin >> cs.workshop;
+		fin >> cs.e;
 	}
 	fin.close();
 	return cs;
@@ -182,9 +184,7 @@ int main()
 	while (1)
 	{
 		PrintMenu();
-		int i = 0;
-		cin >> i;
-		switch (i)
+		switch (GetCorrectNumber(0,7))
 		{
 		case 1:
 		{
@@ -227,7 +227,8 @@ int main()
 		case 7:
 		{
 			system("cls");
-			LoadPipe(pipe);
+			PrintPipe(LoadPipe());
+			PrintStation(LoadStation());
 			break;
 		}
 		case 0:

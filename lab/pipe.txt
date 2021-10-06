@@ -1,4 +1,4 @@
-pipe id: 0
-pipe lenght: 10
-pipe diametr: 5
-pipe status:  pipe is working
+1
+2
+3
+0

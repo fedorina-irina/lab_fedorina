@@ -1,5 +1,5 @@
-Compressor Station id: 0
-Compressor Station name: st
-Compressor Station shops: 8
-Compressor Station workshops: 6
-Compressor Station efficiency indicator: 1
+-858993460
+
+-858993460
+-858993460
+-9.25596e+61
