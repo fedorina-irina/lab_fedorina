@@ -79,21 +79,21 @@ istream& operator >> (istream& in, Pipe& p)
 	return in;
 }
 
-CStation InputStation()
-{
-	CStation cs;
-	cout << "Input compressor station id, please: ";
-	cin >> cs.id;
-	cout << "Input compressor station name, please: ";
-	cin >> cs.name;
-	cout << "How many shops at the compressor station? ";
-	cin >> cs.shop;
-	cout << "How many workshops at the compressor station? ";
-	cin >> cs.workshop;
-	cout << "Input compressor station efficiency indicator, please: ";
-	cin >> cs.e;
-	return cs;
-}
+//CStation InputStation()
+//{
+//	CStation cs;
+//	cout << "Input compressor station id, please: ";
+//	cin >> cs.id;
+//	cout << "Input compressor station name, please: ";
+//	cin >> cs.name;
+//	cout << "How many shops at the compressor station? ";
+//	cin >> cs.shop;
+//	cout << "How many workshops at the compressor station? ";
+//	cin >> cs.workshop;
+//	cout << "Input compressor station efficiency indicator, please: ";
+//	cin >> cs.e;
+//	return cs;
+//}
 
 istream& operator >> (istream& in, CStation& cs)
 {
@@ -143,6 +143,15 @@ void PrintPipe(Pipe p)
 		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " <<  p.status << endl;
 }
 
+ostream& operator << (ostream& out, Pipe& p)
+{
+	out << "Pipe id: " << p.id
+		<< "\nPipe lenght: " << p.lenght
+		<< "\nPipe diametr: " << p.diametr
+		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " << p.status << endl;
+	return out;
+}
+
 void PrintStation(CStation cs)
 {
 	cout << "\nCompressor Station id: " << cs.id
@@ -150,6 +159,16 @@ void PrintStation(CStation cs)
 		<< "\nCompressor Station shops: " << cs.shop 
 		<< "\nCompressor Station workshops: " << cs.workshop 
 		<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
+}
+
+ostream& operator << (ostream& out, CStation& cs)
+{
+	out << "\nCompressor Station id: " << cs.id
+		<< "\nCompressor Station name: " << cs.name
+		<< "\nCompressor Station shops: " << cs.shop 
+		<< "\nCompressor Station workshops: " << cs.workshop 
+		<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
+	return out;
 }
 
 void EditPipe(Pipe& p)
@@ -273,13 +292,13 @@ int main()
 		case 1:
 		{
 			system("cls");
-			pipe = InputPipe();
+			cin >> pipe;
 			break;
 		}
 		case 2:
 		{
 			system("cls");
-			cs = InputStation();
+			cin >> cs;
 			break;
 		}
 		case 3:
@@ -287,8 +306,10 @@ int main()
 			system("cls");
 			if (IsPipeValid(pipe) && IsCSValid(cs))
 				{
-					PrintPipe(pipe);
-					PrintStation(cs);
+					cout << pipe;
+					cout << cs;
+					/*PrintPipe(pipe);
+					PrintStation(cs);*/
 				}
 			else cout << "Input pipe and Compressor station" << endl;
 			break;
