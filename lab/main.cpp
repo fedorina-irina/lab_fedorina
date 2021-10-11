@@ -22,28 +22,61 @@ struct CStation
 
 int GetCorrectNumber(int min, int max)
 {
-	int x;
-	while ((cin >> x).fail() || x < min || x > max)
+	double x;
+	while ((cin >> x).fail() || x < min || x > max || (x - int(x)) != 0 )
+	{
+
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "ERROR! Type number (" << min << " - " << max << "): ";
+	} 
+	return int(x);
+}
+
+//Pipe InputPipe()
+//{
+//	Pipe p;
+//	cout << "Input pipe id, please: ";
+//	cin >> p.id;
+//	cout << "Input pipe lenght, please: ";
+//	cin >> p.lenght;
+//	cout << "Input pipe diametr, please: ";
+//	cin >> p.diametr;
+//	cout << "Indicate the state of the pipe (0 - pipe under repair ; 1 - pipe is working): ";
+//	p.status = GetCorrectNumber(0, 1);
+//	return p;
+//}
+
+istream& operator >> (istream& in, Pipe& p)
+{
+	do
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
-		cout << "Type number (" << min << " - " << max << "): ";
-	} 
-	return x;
-}
+		cout << "Input pipe id, please: ";
+		cin >> p.id;
+	} while (cin.fail() || (p.id < 0));
 
-Pipe InputPipe()
-{
-	Pipe p;
-	cout << "Input pipe id, please: ";
-	cin >> p.id;
-	cout << "Input pipe lenght, please: ";
-	cin >> p.lenght;
-	cout << "Input pipe diametr, please: ";
-	cin >> p.diametr;
+	do
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "Input pipe lenght, please: ";
+		cin >> p.lenght;
+	} while (cin.fail() || (p.lenght < 0));
+
+	do
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "Input pipe diametr, please: ";
+		cin >> p.diametr;
+	} while (cin.fail() || (p.diametr < 0));
+
 	cout << "Indicate the state of the pipe (0 - pipe under repair ; 1 - pipe is working): ";
-	cin >> p.status;
-	return p;
+	p.status = GetCorrectNumber(0, 1);
+
+	return in;
 }
 
 CStation InputStation()
@@ -60,6 +93,46 @@ CStation InputStation()
 	cout << "Input compressor station efficiency indicator, please: ";
 	cin >> cs.e;
 	return cs;
+}
+
+istream& operator >> (istream& in, CStation& cs)
+{
+	do
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "Input compressor station id, please: ";
+		cin >> cs.id;
+	} while (cin.fail() || (cs.id < 0));
+
+	cout << "Input compressor station name, please: ";
+	cin >> cs.name;
+
+	do
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "How many shops at the compressor station? ";
+		cin >> cs.shop;
+	} while (cin.fail() || (cs.shop < 0));
+	
+	do
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "How many workshops at the compressor station? ";
+		cin >> cs.workshop;
+	} while (cin.fail() || (cs.workshop < 0) || (cs.workshop > cs.shop));
+
+	do
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "Input compressor station efficiency indicator, please: ";
+		cin >> cs.e;
+	} while (cin.fail() || (cs.e < 0));
+
+	return in;
 }
 
 void PrintPipe(Pipe p)
@@ -81,21 +154,22 @@ void PrintStation(CStation cs)
 
 void EditPipe(Pipe& p)
 {
-	string change;
-	cout << "Do you want to change pipe status? (yes / no) :\n";
-	cin >> change;
+	cout << "Do you want to change pipe status? (1 - yes ; 0 - no) :\n";
 
-	if (change == "yes")
-			p.status = (!p.status);
+	if (GetCorrectNumber(0, 1) == 1)
+	{
+		if (p.status == 1)
+			p.status = 0;
+		else
+			p.status = 1;
+	}
 }
 
 void EditStation(CStation& cs)
 {
-	string change;
-	cout << "Do you want to launch another workshop or to stop one workshop? (launch / stop) :\n";
-	cin >> change;
+	cout << "Do you want to launch another workshop or to stop one workshop? (1 - launch / 0 - stop) :\n";
 
-	if (change == "launch")
+	if (GetCorrectNumber(0, 1) == 1)
 		cs.workshop++;
 	else
 		cs.workshop--;
@@ -103,7 +177,8 @@ void EditStation(CStation& cs)
 
 void PrintMenu()
 {
-	cout << "1. Input Pipe" << endl
+	cout << "\n***MENU***" << endl
+		<< "1. Input Pipe" << endl
 		<< "2. Input Compressor Station" << endl
 		<< "3. Print Objects" << endl
 		<< "4. Edit Pipe" << endl
@@ -176,11 +251,20 @@ CStation LoadStation()
 	return cs;
 }
 
+bool IsPipeValid(const Pipe& pipe)
+{
+	return pipe.id > 0;
+}
+
+bool IsCSValid(const CStation& cs)
+{
+	return cs.id > 0;
+}
+
 int main()
 {
-	Pipe pipe;
-	CStation cs;
-
+	Pipe pipe = {};
+	CStation cs = {};
 	while (1)
 	{
 		PrintMenu();
@@ -201,8 +285,12 @@ int main()
 		case 3:
 		{
 			system("cls");
-			PrintPipe(pipe);
-			PrintStation(cs);
+			if (IsPipeValid(pipe) && IsCSValid(cs))
+				{
+					PrintPipe(pipe);
+					PrintStation(cs);
+				}
+			else cout << "Input pipe and Compressor station" << endl;
 			break;
 		}
 		case 4:
