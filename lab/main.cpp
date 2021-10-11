@@ -10,7 +10,7 @@ struct Pipe
 	int id;
 	double lenght;
 	double diametr;
-	int status;
+	bool status;
 };
 
 struct CStation
@@ -152,12 +152,7 @@ void EditPipe(Pipe& p)
 	cout << "Do you want to change pipe status? (1 - yes ; 0 - no) :\n";
 
 	if (GetCorrectNumber(0, 1) == 1)
-	{
-		if (p.status == 1)
-			p.status = 0;
-		else
-			p.status = 1;
-	}
+		p.status = (!p.status);
 }
 
 void EditStation(CStation& cs)
@@ -187,7 +182,7 @@ void PrintMenu()
 		<< "4. Edit Pipe" << endl
 		<< "5. Edit Station" << endl
 		<< "6. Save" << endl
-		<< "7. Download" << endl
+		<< "7. Load" << endl
 		<< "0. Exit" << endl
 		<< "Choose action: "<< endl;
 }
@@ -232,18 +227,6 @@ void Load(Pipe p, CStation cs)
 	fin.close();
 }
 
-
-
-bool IsPipeValid(const Pipe& pipe)
-{
-	return pipe.id > 0;
-}
-
-bool IsCSValid(const CStation& cs)
-{
-	return cs.id > 0;
-}
-
 int main()
 {
 	Pipe pipe = {};
@@ -268,7 +251,7 @@ int main()
 		case 3:
 		{
 			system("cls");
-			if (IsPipeValid(pipe) && IsCSValid(cs))
+			if ((pipe.lenght != 0) && (cs.shop != 0))
 				{
 					cout << pipe;
 					cout << cs;
