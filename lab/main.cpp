@@ -163,11 +163,19 @@ void EditPipe(Pipe& p)
 void EditStation(CStation& cs)
 {
 	cout << "Do you want to launch another workshop or to stop one workshop? (1 - launch / 0 - stop) :\n";
-
 	if (GetCorrectNumber(0, 1) == 1)
-		cs.workshop++;
+		{
+		if (cs.workshop < cs.shop)
+			cs.workshop++;
+		else cout << "You can't do this";
+		}
+		
 	else
-		cs.workshop--;
+	{
+		if (cs.workshop > 0)
+			cs.workshop--;
+		else cout << "You can't do this";
+	}
 }
 
 void PrintMenu()
@@ -297,7 +305,6 @@ int main()
 		{
 			return 0;
 		}
-
 
 		}
 	}
