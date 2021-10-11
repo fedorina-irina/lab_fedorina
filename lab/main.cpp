@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <cstdlib>
 
 using namespace std;
 
@@ -33,20 +35,6 @@ int GetCorrectNumber(int min, int max)
 	return int(x);
 }
 
-//Pipe InputPipe()
-//{
-//	Pipe p;
-//	cout << "Input pipe id, please: ";
-//	cin >> p.id;
-//	cout << "Input pipe lenght, please: ";
-//	cin >> p.lenght;
-//	cout << "Input pipe diametr, please: ";
-//	cin >> p.diametr;
-//	cout << "Indicate the state of the pipe (0 - pipe under repair ; 1 - pipe is working): ";
-//	p.status = GetCorrectNumber(0, 1);
-//	return p;
-//}
-
 istream& operator >> (istream& in, Pipe& p)
 {
 	do
@@ -73,27 +61,16 @@ istream& operator >> (istream& in, Pipe& p)
 		cin >> p.diametr;
 	} while (cin.fail() || (p.diametr < 0));
 
-	cout << "Indicate the state of the pipe (0 - pipe under repair ; 1 - pipe is working): ";
-	p.status = GetCorrectNumber(0, 1);
+	do
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "Indicate the state of the pipe (0 - pipe under repair ; 1 - pipe is working): ";
+		cin >> p.status;
+	} while (cin.fail() || (p.status != 0) && (p.status != 1));
 
 	return in;
 }
-
-//CStation InputStation()
-//{
-//	CStation cs;
-//	cout << "Input compressor station id, please: ";
-//	cin >> cs.id;
-//	cout << "Input compressor station name, please: ";
-//	cin >> cs.name;
-//	cout << "How many shops at the compressor station? ";
-//	cin >> cs.shop;
-//	cout << "How many workshops at the compressor station? ";
-//	cin >> cs.workshop;
-//	cout << "Input compressor station efficiency indicator, please: ";
-//	cin >> cs.e;
-//	return cs;
-//}
 
 istream& operator >> (istream& in, CStation& cs)
 {
@@ -105,8 +82,10 @@ istream& operator >> (istream& in, CStation& cs)
 		cin >> cs.id;
 	} while (cin.fail() || (cs.id < 0));
 
+	cin.ignore(10000, '\n');
 	cout << "Input compressor station name, please: ";
-	cin >> cs.name;
+	string(cs.name);
+	getline(cin, cs.name);
 
 	do
 	{
@@ -135,12 +114,18 @@ istream& operator >> (istream& in, CStation& cs)
 	return in;
 }
 
-void PrintPipe(Pipe p)
+void Print(Pipe p, CStation cs)
 {
 	cout << "Pipe id: " << p.id
 		<< "\nPipe lenght: " << p.lenght
 		<< "\nPipe diametr: " << p.diametr
-		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " <<  p.status << endl;
+		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " << p.status
+		<< "\nCompressor Station id: " << cs.id << endl;
+	cin.ignore(10000, '\n');
+	cout << "\nCompressor Station name: " << cs.name
+		<< "\nCompressor Station shops: " << cs.shop
+		<< "\nCompressor Station workshops: " << cs.workshop
+		<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
 }
 
 ostream& operator << (ostream& out, Pipe& p)
@@ -152,16 +137,7 @@ ostream& operator << (ostream& out, Pipe& p)
 	return out;
 }
 
-void PrintStation(CStation cs)
-{
-	cout << "\nCompressor Station id: " << cs.id
-		<< "\nCompressor Station name: " << cs.name
-		<< "\nCompressor Station shops: " << cs.shop 
-		<< "\nCompressor Station workshops: " << cs.workshop 
-		<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
-}
-
-ostream& operator << (ostream& out, CStation& cs)
+ostream& operator << (ostream& out, const CStation& cs)
 {
 	out << "\nCompressor Station id: " << cs.id
 		<< "\nCompressor Station name: " << cs.name
@@ -208,27 +184,17 @@ void PrintMenu()
 		<< "Choose action: "<< endl;
 }
 
-void SavePipe(Pipe p)
+void Save(Pipe p, CStation cs)
 {
 	ofstream fout;
-	fout.open("pipe.txt", ios::out);
+	fout.open("file.txt", ios::out);
 	if (fout.is_open())
 	{
 		fout << p.id << endl
 			<< p.lenght << endl
 			<< p.diametr << endl
-			<< p.status << endl;
-		fout.close();
-	}
-}
-
-void SaveStation(CStation cs)
-{
-	ofstream fout;
-	fout.open("station.txt", ios::out);
-	if (fout.is_open())
-	{
-		fout << cs.id << endl
+			<< p.status << endl
+			<< cs.id << endl
 			<< cs.name << endl
 			<< cs.shop << endl
 			<< cs.workshop << endl
@@ -237,38 +203,28 @@ void SaveStation(CStation cs)
 	}
 }
 
-Pipe LoadPipe()
+void Load(Pipe p, CStation cs)
 {
-	Pipe p;
 	ifstream fin;
-	fin.open("pipe.txt", ios::in);
+	fin.open("file.txt", ios::in);
 	if (fin.is_open())
 	{
 		fin >> p.id;
 		fin >> p.lenght;
 		fin >> p.diametr;
 		fin >> p.status;
-	}
-	fin.close();
-	return p;
-}
-
-CStation LoadStation()
-{
-	CStation cs;
-	ifstream fin;
-	fin.open("station.txt", ios::in);
-	if (fin.is_open())
-	{
 		fin >> cs.id;
-		fin >> cs.name;
+		fin.ignore(10000, '\n');
+		string(cs.name);
+		getline(fin, cs.name);
 		fin >> cs.shop;
 		fin >> cs.workshop;
 		fin >> cs.e;
 	}
 	fin.close();
-	return cs;
 }
+
+
 
 bool IsPipeValid(const Pipe& pipe)
 {
@@ -308,8 +264,6 @@ int main()
 				{
 					cout << pipe;
 					cout << cs;
-					/*PrintPipe(pipe);
-					PrintStation(cs);*/
 				}
 			else cout << "Input pipe and Compressor station" << endl;
 			break;
@@ -329,15 +283,14 @@ int main()
 		case 6:
 		{
 			system("cls");
-			SavePipe(pipe);
-			SaveStation(cs);
+			Save(pipe, cs);
 			break;
 		}
 		case 7:
 		{
 			system("cls");
-			PrintPipe(LoadPipe());
-			PrintStation(LoadStation());
+			Load(pipe, cs);
+			Print(pipe, cs);
 			break;
 		}
 		case 0:
