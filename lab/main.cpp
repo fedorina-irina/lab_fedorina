@@ -22,9 +22,11 @@ struct CStation
 	int koefCStation;
 };
 
-int GetCorrectNumber(int min, int max)
+template <typename T>
+
+T GetCorrectNumber(T min, T max)
 {
-	double x;
+	T x;
 	while ((cin >> x).fail() || x < min || x > max || (x - int(x)) != 0 )
 	{
 
@@ -32,7 +34,7 @@ int GetCorrectNumber(int min, int max)
 		cin.ignore(10000, '\n');
 		cout << "ERROR! Type number (" << min << " - " << max << "): ";
 	} 
-	return int(x);
+	return x;
 }
 
 istream& operator >> (istream& in, Pipe& p)
