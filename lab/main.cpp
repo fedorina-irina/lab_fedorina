@@ -71,16 +71,39 @@ istream& operator >> (istream& in, CStation& cs)
 
 void Print(Pipe p, CStation cs)
 {
-	cout << "Pipe id: " << p.idPipe
-		<< "\nPipe lenght: " << p.lenghtPipe
-		<< "\nPipe diametr: " << p.diametrPipe
-		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " << p.statusPipe
-		<< "\nCompressor Station id: " << cs.idCStation << endl;
-	cin.ignore(10000, '\n');
-	cout << "\nCompressor Station name: " << cs.nameCStation
-		<< "\nCompressor Station shops: " << cs.shopCStation
-		<< "\nCompressor Station workshops: " << cs.workshopCStation
-		<< "\nCompressor Station efficiency indicator: " << cs.koefCStation << endl;
+	if (p.lenghtPipe > 0 && cs.shopCStation == 0)
+	{
+		cout << "\nPipe id: " << p.idPipe << endl;
+		cout << "Pipe lenght: " << p.lenghtPipe << endl;
+		cout << "Pipe diametr: " << p.diametrPipe << endl;
+		cout << "Pipe status (1 - pipe is working ; 0 - pipe under repair): " << p.statusPipe << endl;
+	}
+	else
+		if (p.lenghtPipe == 0 && cs.shopCStation > 0)
+		{
+			cout << "Compressor Station id: " << cs.idCStation << endl;
+			cin.ignore(10000, '\n');
+			cout << "Compressor Station name: " << cs.nameCStation << endl;
+			cout << "Compressor Station shops: " << cs.shopCStation << endl;
+			cout << "Compressor Station workshops: " << cs.workshopCStation << endl;
+			cout << "Compressor Station efficiency indicator: " << cs.koefCStation << endl;
+		}
+		else
+			if (p.lenghtPipe > 0 && cs.shopCStation > 0)
+			{
+				cout << "\nPipe id: " << p.idPipe << endl;
+				cout << "Pipe lenght: " << p.lenghtPipe << endl;
+				cout << "Pipe diametr: " << p.diametrPipe << endl;
+				cout << "Pipe status (1 - pipe is working ; 0 - pipe under repair): " << p.statusPipe << endl;
+				cout << "Compressor Station id: " << cs.idCStation << endl;
+				cin.ignore(10000, '\n');
+				cout << "Compressor Station name: " << cs.nameCStation << endl;
+				cout << "Compressor Station shops: " << cs.shopCStation << endl;
+				cout << "Compressor Station workshops: " << cs.workshopCStation << endl;
+				cout << "Compressor Station efficiency indicator: " << cs.koefCStation << endl;
+			}
+			else
+				cout << "You should input objects" << endl;
 }
 
 ostream& operator << (ostream& out, const Pipe& p)
