@@ -39,21 +39,11 @@ T GetCorrectNumber(T min, T max)
 
 istream& operator >> (istream& in, Pipe& p)
 {
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Input pipe lenght, please: ";
-		cin >> p.lenghtPipe;
-	} while (cin.fail() || (p.lenghtPipe < 0));
-
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Input pipe diametr, please: ";
-		cin >> p.diametrPipe;
-	} while (cin.fail() || (p.diametrPipe < 0) || (p.diametrPipe > 1420));
+	cout << "Input pipe lenght [m], please: ";
+	p.lenghtPipe = GetCorrectNumber(0,12);
+	
+	cout << "Input pipe diametr [mm], please: ";
+	p.diametrPipe = GetCorrectNumber(0,1420);
 
 	return in;
 }
@@ -61,42 +51,20 @@ istream& operator >> (istream& in, Pipe& p)
 istream& operator >> (istream& in, CStation& cs)
 {
 	cout << "Input compressor station name, please: ";
-	while (true)
-	{
-		cin.ignore(10000, '\n');
-		getline(cin, cs.nameCStation);
-		if (cs.nameCStation.empty())
-		{
-			cin.clear();
-			system("cls");
-			cout << "Don't input empty name" << endl;
-		}
-		else break;
-		
-	}
 	do
 	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "How many shops at the compressor station? ";
-		cin >> cs.shopCStation;
-	} while (cin.fail() || (cs.shopCStation < 0));
+		getline(cin, cs.nameCStation);	
+	} while (cs.nameCStation.length() == 0);
 	
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "How many workshops at the compressor station? ";
-		cin >> cs.workshopCStation;
-	} while (cin.fail() || (cs.workshopCStation < 0) || (cs.workshopCStation > cs.shopCStation));
+	cout << "How many shops at the compressor station? (1 - 10)";
+	cs.shopCStation = GetCorrectNumber(1,10);
+	
+	cout << "How many workshops at the compressor station? (1 - 10)";
+	cs.workshopCStation = GetCorrectNumber(1,10);
 
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Input compressor station efficiency indicator, please: ";
-		cin >> cs.koefCStation;
-	} while (cin.fail() || (cs.koefCStation < 0) || (cs.koefCStation > 100));
+	
+	cout << "Input compressor station efficiency indicator [%], please: ";
+	cs.koefCStation = GetCorrectNumber(0,100);
 
 	return in;
 }
@@ -205,7 +173,6 @@ void Load(Pipe p, CStation cs)
 		fin >> p.statusPipe;
 		fin >> cs.idCStation;
 		fin.ignore(10000, '\n');
-		string(cs.nameCStation);
 		getline(fin, cs.nameCStation);
 		fin >> cs.shopCStation;
 		fin >> cs.workshopCStation;
