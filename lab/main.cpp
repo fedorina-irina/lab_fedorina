@@ -171,15 +171,33 @@ void Save(Pipe p, CStation cs)
 	fout.open("file.txt", ios::out);
 	if (fout.is_open())
 	{
-		fout << p.idPipe << endl
-			<< p.lenghtPipe << endl
-			<< p.diametrPipe << endl
-			<< p.statusPipe << endl
-			<< cs.idCStation << endl
-			<< cs.nameCStation << endl
-			<< cs.shopCStation << endl
-			<< cs.workshopCStation << endl
-			<< cs.koefCStation << endl;
+		if (p.lenghtPipe > 0 && cs.shopCStation == 0)
+		{
+			fout << p.idPipe << endl
+				<< p.lenghtPipe << endl
+				<< p.diametrPipe << endl
+				<< p.statusPipe << endl;
+		}
+		else if (p.lenghtPipe == 0 && cs.shopCStation > 0)
+		{
+			fout << cs.idCStation << endl
+				<< cs.nameCStation << endl
+				<< cs.shopCStation << endl
+				<< cs.workshopCStation << endl
+				<< cs.koefCStation << endl;
+		}
+		else if (p.lenghtPipe > 0 && cs.shopCStation > 0)
+		{
+			fout << p.idPipe << endl
+				<< p.lenghtPipe << endl
+				<< p.diametrPipe << endl
+				<< p.statusPipe << endl
+				<< cs.idCStation << endl
+				<< cs.nameCStation << endl
+				<< cs.shopCStation << endl
+				<< cs.workshopCStation << endl
+				<< cs.koefCStation << endl;
+		}
 		fout.close();
 	}
 }
