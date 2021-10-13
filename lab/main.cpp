@@ -39,10 +39,12 @@ T GetCorrectNumber(T min, T max)
 
 istream& operator >> (istream& in, Pipe& p)
 {
-	cout << "Input pipe lenght [m], please: ";
+	p.idPipe++;
+
+	cout << "Input pipe lenght [m], please: " << endl;
 	p.lenghtPipe = GetCorrectNumber(0,12);
 	
-	cout << "Input pipe diametr [mm], please: ";
+	cout << "Input pipe diametr [mm], please: " << endl;
 	p.diametrPipe = GetCorrectNumber(0,1420);
 
 	return in;
@@ -50,6 +52,8 @@ istream& operator >> (istream& in, Pipe& p)
 
 istream& operator >> (istream& in, CStation& cs)
 {
+	cs.idCStation++;
+
 	cout << "Input compressor station name, please: ";
 	do
 	{
@@ -71,7 +75,7 @@ istream& operator >> (istream& in, CStation& cs)
 
 void Print(Pipe p, CStation cs)
 {
-	if (p.lenghtPipe > 0 && cs.shopCStation == 0)
+	if (p.idPipe > 0 && cs.idCStation == 0)
 	{
 		cout << "\nPipe id: " << p.idPipe << endl;
 		cout << "Pipe lenght: " << p.lenghtPipe << endl;
@@ -79,7 +83,7 @@ void Print(Pipe p, CStation cs)
 		cout << "Pipe status (1 - pipe is working ; 0 - pipe under repair): " << p.statusPipe << endl;
 	}
 	else
-		if (p.lenghtPipe == 0 && cs.shopCStation > 0)
+		if (p.idPipe == 0 && cs.idCStation > 0)
 		{
 			cout << "Compressor Station id: " << cs.idCStation << endl;
 			cin.ignore(10000, '\n');
@@ -89,7 +93,7 @@ void Print(Pipe p, CStation cs)
 			cout << "Compressor Station efficiency indicator: " << cs.koefCStation << endl;
 		}
 		else
-			if (p.lenghtPipe > 0 && cs.shopCStation > 0)
+			if (p.idPipe > 0 && cs.idCStation > 0)
 			{
 				cout << "\nPipe id: " << p.idPipe << endl;
 				cout << "Pipe lenght: " << p.lenghtPipe << endl;
@@ -171,14 +175,14 @@ void Save(Pipe p, CStation cs)
 	fout.open("file.txt", ios::out);
 	if (fout.is_open())
 	{
-		if (p.lenghtPipe > 0 && cs.shopCStation == 0)
+		if (p.idPipe > 0 && cs.idCStation == 0)
 		{
 			fout << p.idPipe << endl
 				<< p.lenghtPipe << endl
 				<< p.diametrPipe << endl
 				<< p.statusPipe << endl;
 		}
-		else if (p.lenghtPipe == 0 && cs.shopCStation > 0)
+		else if (p.idPipe == 0 && cs.idCStation > 0)
 		{
 			fout << cs.idCStation << endl
 				<< cs.nameCStation << endl
@@ -186,7 +190,7 @@ void Save(Pipe p, CStation cs)
 				<< cs.workshopCStation << endl
 				<< cs.koefCStation << endl;
 		}
-		else if (p.lenghtPipe > 0 && cs.shopCStation > 0)
+		else if (p.idPipe > 0 && cs.idCStation > 0)
 		{
 			fout << p.idPipe << endl
 				<< p.lenghtPipe << endl
@@ -198,6 +202,7 @@ void Save(Pipe p, CStation cs)
 				<< cs.workshopCStation << endl
 				<< cs.koefCStation << endl;
 		}
+		else cout << "File is empty. Input objects" << endl;
 		fout.close();
 	}
 }
@@ -208,28 +213,32 @@ void Load(Pipe p, CStation cs)
 	fin.open("file.txt", ios::in);
 	if (fin.is_open())
 	{
-		fin >> p.idPipe;
-		fin >> p.lenghtPipe;
-		fin >> p.diametrPipe;
-		fin >> p.statusPipe;
-		fin >> cs.idCStation;
-		fin.ignore(10000, '\n');
-		getline(fin, cs.nameCStation);
-		fin >> cs.shopCStation;
-		fin >> cs.workshopCStation;
-		fin >> cs.koefCStation;
+		while (!fin.eof())
+		{
+			fin >> p.idPipe;
+			fin >> p.lenghtPipe;
+			fin >> p.diametrPipe;
+			fin >> p.statusPipe;
+			fin >> cs.idCStation;
+			fin.ignore(10000, '\n');
+			getline(fin, cs.nameCStation);
+			fin >> cs.shopCStation;
+			fin >> cs.workshopCStation;
+			fin >> cs.koefCStation;
+		}
 	}
+	else cout << "ERROR!" << endl;
 	fin.close();
 }
 
 int main()
 {
-	Pipe p = {};
-	CStation cs = {};
+	Pipe p;
+	CStation cs;
 
-	p.idPipe = 1;
+	p.idPipe = 0;
 	p.statusPipe = 1;
-	cs.idCStation = 1;
+	cs.idCStation = 0;
 
 	while (1)
 	{
@@ -238,54 +247,68 @@ int main()
 		{
 		case 1:
 		{
+			cin.clear();
 			system("cls");
 			cin >> p;
 			break;
 		}
 		case 2:
 		{
+			cin.clear();
 			system("cls");
 			cin >> cs;
 			break;
 		}
 		case 3:
 		{
+			cin.clear();
 			system("cls");
-			if ((p.lenghtPipe != 0) && (cs.shopCStation == 0))
-						cout << p;
-			else if ((p.lenghtPipe == 0) && (cs.shopCStation != 0))
+			if ((p.idPipe != 0) && (cs.idCStation == 0))
+					cout << p;
+			else if ((p.idPipe == 0) && (cs.idCStation != 0))
 					cout << cs;
-			else if ((p.lenghtPipe != 0) && (cs.shopCStation != 0))
+			else if ((p.idPipe != 0) && (cs.idCStation != 0))
 			{
 				cout << p;
 				cout << cs;
 			}
-			else cout << "Input pipe and Compressor station" << endl;
+			else cout << "Input objects" << endl;
 			break;
 		}
 		case 4:
 		{
+			cin.clear();
 			system("cls");
-			EditPipe(p);
+			if (p.idPipe > 0)
+			{
+				EditPipe(p);
+			}
+			else cout << "Input pipe" << endl;
 			break;
 		}
 		case 5:
 		{
+			cin.clear();
 			system("cls");
-			EditStation(cs);
+			if (cs.idCStation > 0)
+			{
+				EditStation(cs);
+			}
+			else cout << "Input compressor station" << endl;
 			break;
 		}
 		case 6:
 		{
+			cin.clear();
 			system("cls");
 			Save(p, cs);
 			break;
 		}
 		case 7:
 		{
+			cin.clear();
 			system("cls");
 			Load(p, cs);
-			Print(p, cs);
 			break;
 		}
 		case 0:

@@ -1,9 +1,4 @@
 1
-300
-500
-0
-1
-compressor station
 10
-5
+100
 1
