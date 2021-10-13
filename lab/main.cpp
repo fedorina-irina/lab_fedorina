@@ -309,6 +309,7 @@ int main()
 			cin.clear();
 			system("cls");
 			Load(p, cs);
+			Print(p, cs);
 			break;
 		}
 		case 0:
