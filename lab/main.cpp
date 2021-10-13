@@ -7,19 +7,19 @@ using namespace std;
 
 struct Pipe
 {
-	int id;
-	double lenght;
-	double diametr;
-	bool status;
+	int idPipe;
+	double lenghtPipe;
+	int diametrPipe;
+	bool statusPipe;
 };
 
 struct CStation
 {
-	int id;
-	string name;
-	int shop;
-	int workshop;
-	double e;
+	int idCStation;
+	string nameCStation;
+	int shopCStation;
+	int workshopCStation;
+	int koefCStation;
 };
 
 int GetCorrectNumber(int min, int max)
@@ -41,109 +41,94 @@ istream& operator >> (istream& in, Pipe& p)
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
-		cout << "Input pipe id, please: ";
-		cin >> p.id;
-	} while (cin.fail() || (p.id < 0));
-
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
 		cout << "Input pipe lenght, please: ";
-		cin >> p.lenght;
-	} while (cin.fail() || (p.lenght < 0));
+		cin >> p.lenghtPipe;
+	} while (cin.fail() || (p.lenghtPipe < 0));
 
 	do
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
 		cout << "Input pipe diametr, please: ";
-		cin >> p.diametr;
-	} while (cin.fail() || (p.diametr < 0));
-
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Indicate the state of the pipe (0 - pipe under repair ; 1 - pipe is working): ";
-		cin >> p.status;
-	} while (cin.fail() || (p.status != 0) && (p.status != 1));
+		cin >> p.diametrPipe;
+	} while (cin.fail() || (p.diametrPipe < 0) || (p.diametrPipe > 1420));
 
 	return in;
 }
 
 istream& operator >> (istream& in, CStation& cs)
 {
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Input compressor station id, please: ";
-		cin >> cs.id;
-	} while (cin.fail() || (cs.id < 0));
-
-	cin.ignore(10000, '\n');
 	cout << "Input compressor station name, please: ";
-	string(cs.name);
-	getline(cin, cs.name);
-
+	while (true)
+	{
+		cin.ignore(10000, '\n');
+		getline(cin, cs.nameCStation);
+		if (cs.nameCStation.empty())
+		{
+			cin.clear();
+			system("cls");
+			cout << "Don't input empty name" << endl;
+		}
+		else break;
+		
+	}
 	do
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
 		cout << "How many shops at the compressor station? ";
-		cin >> cs.shop;
-	} while (cin.fail() || (cs.shop < 0));
+		cin >> cs.shopCStation;
+	} while (cin.fail() || (cs.shopCStation < 0));
 	
 	do
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
 		cout << "How many workshops at the compressor station? ";
-		cin >> cs.workshop;
-	} while (cin.fail() || (cs.workshop < 0) || (cs.workshop > cs.shop));
+		cin >> cs.workshopCStation;
+	} while (cin.fail() || (cs.workshopCStation < 0) || (cs.workshopCStation > cs.shopCStation));
 
 	do
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
 		cout << "Input compressor station efficiency indicator, please: ";
-		cin >> cs.e;
-	} while (cin.fail() || (cs.e < 0));
+		cin >> cs.koefCStation;
+	} while (cin.fail() || (cs.koefCStation < 0) || (cs.koefCStation > 100));
 
 	return in;
 }
 
 void Print(Pipe p, CStation cs)
 {
-	cout << "Pipe id: " << p.id
-		<< "\nPipe lenght: " << p.lenght
-		<< "\nPipe diametr: " << p.diametr
-		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " << p.status
-		<< "\nCompressor Station id: " << cs.id << endl;
+	cout << "Pipe id: " << p.idPipe
+		<< "\nPipe lenght: " << p.lenghtPipe
+		<< "\nPipe diametr: " << p.diametrPipe
+		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " << p.statusPipe
+		<< "\nCompressor Station id: " << cs.idCStation << endl;
 	cin.ignore(10000, '\n');
-	cout << "\nCompressor Station name: " << cs.name
-		<< "\nCompressor Station shops: " << cs.shop
-		<< "\nCompressor Station workshops: " << cs.workshop
-		<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
+	cout << "\nCompressor Station name: " << cs.nameCStation
+		<< "\nCompressor Station shops: " << cs.shopCStation
+		<< "\nCompressor Station workshops: " << cs.workshopCStation
+		<< "\nCompressor Station efficiency indicator: " << cs.koefCStation << endl;
 }
 
-ostream& operator << (ostream& out, Pipe& p)
+ostream& operator << (ostream& out, const Pipe& p)
 {
-	out << "Pipe id: " << p.id
-		<< "\nPipe lenght: " << p.lenght
-		<< "\nPipe diametr: " << p.diametr
-		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " << p.status << endl;
+	out << "Pipe id: " << p.idPipe
+		<< "\nPipe lenght: " << p.lenghtPipe
+		<< "\nPipe diametr: " << p.diametrPipe
+		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " << p.statusPipe << endl;
 	return out;
 }
 
 ostream& operator << (ostream& out, const CStation& cs)
 {
-	out << "\nCompressor Station id: " << cs.id
-		<< "\nCompressor Station name: " << cs.name
-		<< "\nCompressor Station shops: " << cs.shop 
-		<< "\nCompressor Station workshops: " << cs.workshop 
-		<< "\nCompressor Station efficiency indicator: " << cs.e << endl;
+	out << "\nCompressor Station id: " << cs.idCStation
+		<< "\nCompressor Station name: " << cs.nameCStation
+		<< "\nCompressor Station shops: " << cs.shopCStation
+		<< "\nCompressor Station workshops: " << cs.workshopCStation
+		<< "\nCompressor Station efficiency indicator: " << cs.koefCStation << endl;
 	return out;
 }
 
@@ -152,7 +137,7 @@ void EditPipe(Pipe& p)
 	cout << "Do you want to change pipe status? (1 - yes ; 0 - no) :\n";
 
 	if (GetCorrectNumber(0, 1) == 1)
-		p.status = (!p.status);
+		p.statusPipe = (!p.statusPipe);
 }
 
 void EditStation(CStation& cs)
@@ -160,15 +145,15 @@ void EditStation(CStation& cs)
 	cout << "Do you want to launch another workshop or to stop one workshop? (1 - launch / 0 - stop) :\n";
 	if (GetCorrectNumber(0, 1) == 1)
 		{
-		if (cs.workshop < cs.shop)
-			cs.workshop++;
+		if (cs.workshopCStation < cs.shopCStation)
+			cs.workshopCStation++;
 		else cout << "You can't do this";
 		}
 		
 	else
 	{
-		if (cs.workshop > 0)
-			cs.workshop--;
+		if (cs.workshopCStation > 0)
+			cs.workshopCStation--;
 		else cout << "You can't do this";
 	}
 }
@@ -193,15 +178,15 @@ void Save(Pipe p, CStation cs)
 	fout.open("file.txt", ios::out);
 	if (fout.is_open())
 	{
-		fout << p.id << endl
-			<< p.lenght << endl
-			<< p.diametr << endl
-			<< p.status << endl
-			<< cs.id << endl
-			<< cs.name << endl
-			<< cs.shop << endl
-			<< cs.workshop << endl
-			<< cs.e << endl;
+		fout << p.idPipe << endl
+			<< p.lenghtPipe << endl
+			<< p.diametrPipe << endl
+			<< p.statusPipe << endl
+			<< cs.idCStation << endl
+			<< cs.nameCStation << endl
+			<< cs.shopCStation << endl
+			<< cs.workshopCStation << endl
+			<< cs.koefCStation << endl;
 		fout.close();
 	}
 }
@@ -212,25 +197,30 @@ void Load(Pipe p, CStation cs)
 	fin.open("file.txt", ios::in);
 	if (fin.is_open())
 	{
-		fin >> p.id;
-		fin >> p.lenght;
-		fin >> p.diametr;
-		fin >> p.status;
-		fin >> cs.id;
+		fin >> p.idPipe;
+		fin >> p.lenghtPipe;
+		fin >> p.diametrPipe;
+		fin >> p.statusPipe;
+		fin >> cs.idCStation;
 		fin.ignore(10000, '\n');
-		string(cs.name);
-		getline(fin, cs.name);
-		fin >> cs.shop;
-		fin >> cs.workshop;
-		fin >> cs.e;
+		string(cs.nameCStation);
+		getline(fin, cs.nameCStation);
+		fin >> cs.shopCStation;
+		fin >> cs.workshopCStation;
+		fin >> cs.koefCStation;
 	}
 	fin.close();
 }
 
 int main()
 {
-	Pipe pipe = {};
+	Pipe p = {};
 	CStation cs = {};
+
+	p.idPipe = 1;
+	p.statusPipe = 1;
+	cs.idCStation = 1;
+
 	while (1)
 	{
 		PrintMenu();
@@ -239,7 +229,7 @@ int main()
 		case 1:
 		{
 			system("cls");
-			cin >> pipe;
+			cin >> p;
 			break;
 		}
 		case 2:
@@ -251,18 +241,22 @@ int main()
 		case 3:
 		{
 			system("cls");
-			if ((pipe.lenght != 0) && (cs.shop != 0))
-				{
-					cout << pipe;
+			if ((p.lenghtPipe != 0) && (cs.shopCStation == 0))
+						cout << p;
+			else if ((p.lenghtPipe == 0) && (cs.shopCStation != 0))
 					cout << cs;
-				}
+			else if ((p.lenghtPipe != 0) && (cs.shopCStation != 0))
+			{
+				cout << p;
+				cout << cs;
+			}
 			else cout << "Input pipe and Compressor station" << endl;
 			break;
 		}
 		case 4:
 		{
 			system("cls");
-			EditPipe(pipe);
+			EditPipe(p);
 			break;
 		}
 		case 5:
@@ -274,14 +268,14 @@ int main()
 		case 6:
 		{
 			system("cls");
-			Save(pipe, cs);
+			Save(p, cs);
 			break;
 		}
 		case 7:
 		{
 			system("cls");
-			Load(pipe, cs);
-			Print(pipe, cs);
+			Load(p, cs);
+			Print(p, cs);
 			break;
 		}
 		case 0:
