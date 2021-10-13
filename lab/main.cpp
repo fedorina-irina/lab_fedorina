@@ -8,7 +8,7 @@ using namespace std;
 struct Pipe
 {
 	int idPipe;
-	double lenghtPipe;
+	int lenghtPipe;
 	int diametrPipe;
 	bool statusPipe;
 };
@@ -27,7 +27,7 @@ template <typename T>
 T GetCorrectNumber(T min, T max)
 {
 	T x;
-	while ((cin >> x).fail() || x < min || x > max || (x - int(x)) != 0 )
+	while ((cin >> x).fail() || x < min || x > max || (x - int(x)) != 0 || (char(cin.peek()) == '.') || (char(cin.peek()) == ','))
 	{
 
 		cin.clear();
