@@ -55,16 +55,14 @@ istream& operator >> (istream& in, CStation& cs)
 	cs.idCStation++;
 
 	cout << "Input compressor station name, please: ";
-	do
-	{
-		getline(cin, cs.nameCStation);	
-	} while (cs.nameCStation.length() == 0);
+	cin.ignore(10000, '\n');
+	getline(cin, cs.nameCStation);
 	
-	cout << "How many shops at the compressor station? (1 - 10)";
+	cout << "How many shops at the compressor station? (1 - 10): ";
 	cs.shopCStation = GetCorrectNumber(1,10);
 	
-	cout << "How many workshops at the compressor station? (1 - 10)";
-	cs.workshopCStation = GetCorrectNumber(1,10);
+	cout << "How many workshops at the compressor station? ";
+	cs.workshopCStation = GetCorrectNumber(1, cs.shopCStation);
 
 	
 	cout << "Input compressor station efficiency indicator [%], please: ";
@@ -171,20 +169,25 @@ void PrintMenu()
 
 void Save(Pipe p, CStation cs)
 {
+	string object;
 	ofstream fout;
 	fout.open("file.txt", ios::out);
 	if (fout.is_open())
 	{
 		if (p.idPipe > 0 && cs.idCStation == 0)
 		{
-			fout << p.idPipe << endl
+			object = "PIPE";
+			fout << object << endl 
+				<< p.idPipe << endl
 				<< p.lenghtPipe << endl
 				<< p.diametrPipe << endl
 				<< p.statusPipe << endl;
 		}
 		else if (p.idPipe == 0 && cs.idCStation > 0)
 		{
-			fout << cs.idCStation << endl
+			object = "COMPRESSOR STATION";
+			fout << object << endl
+				<< cs.idCStation << endl
 				<< cs.nameCStation << endl
 				<< cs.shopCStation << endl
 				<< cs.workshopCStation << endl
@@ -192,7 +195,9 @@ void Save(Pipe p, CStation cs)
 		}
 		else if (p.idPipe > 0 && cs.idCStation > 0)
 		{
-			fout << p.idPipe << endl
+			object = "PIPE AND COMPRESSOR STATION";
+			fout << object << endl
+				<< p.idPipe << endl
 				<< p.lenghtPipe << endl
 				<< p.diametrPipe << endl
 				<< p.statusPipe << endl
@@ -207,24 +212,45 @@ void Save(Pipe p, CStation cs)
 	}
 }
 
-void Load(Pipe p, CStation cs)
+void Load(Pipe& p, CStation& cs)
 {
+	string object;
 	ifstream fin;
 	fin.open("file.txt", ios::in);
 	if (fin.is_open())
 	{
 		while (!fin.eof())
 		{
-			fin >> p.idPipe;
-			fin >> p.lenghtPipe;
-			fin >> p.diametrPipe;
-			fin >> p.statusPipe;
-			fin >> cs.idCStation;
-			fin.ignore(10000, '\n');
-			getline(fin, cs.nameCStation);
-			fin >> cs.shopCStation;
-			fin >> cs.workshopCStation;
-			fin >> cs.koefCStation;
+			getline(fin, object);
+			if (object == "PIPE")
+			{
+				fin >> p.idPipe;
+				fin >> p.lenghtPipe;
+				fin >> p.diametrPipe;
+				fin >> p.statusPipe;
+			}
+			else if (object == "COMPRESSOR STATION")
+			{
+				fin >> cs.idCStation;
+				fin.ignore(10000, '\n');
+				getline(fin, cs.nameCStation);
+				fin >> cs.shopCStation;
+				fin >> cs.workshopCStation;
+				fin >> cs.koefCStation;
+			}
+			else if (object == "PIPE AND COMPRESSOR STATION")
+			{
+				fin >> p.idPipe;
+				fin >> p.lenghtPipe;
+				fin >> p.diametrPipe;
+				fin >> p.statusPipe;
+				fin >> cs.idCStation;
+				fin.ignore(10000, '\n');
+				getline(fin, cs.nameCStation);
+				fin >> cs.shopCStation;
+				fin >> cs.workshopCStation;
+				fin >> cs.koefCStation;
+			}
 		}
 	}
 	else cout << "ERROR!" << endl;
@@ -309,7 +335,6 @@ int main()
 			cin.clear();
 			system("cls");
 			Load(p, cs);
-			Print(p, cs);
 			break;
 		}
 		case 0:
