@@ -41,11 +41,11 @@ istream& operator >> (istream& in, Pipe& p)
 {
 	p.idPipe++;
 
-	cout << "Input pipe lenght [m], please: " << endl;
-	p.lenghtPipe = GetCorrectNumber(0,12);
+	cout << "Input pipe lenght (1 - 5000 m), please: " << endl;
+	p.lenghtPipe = GetCorrectNumber(1,5000);
 	
-	cout << "Input pipe diametr [mm], please: " << endl;
-	p.diametrPipe = GetCorrectNumber(0,1420);
+	cout << "Input pipe diametr (1 - 1420 mm), please: " << endl;
+	p.diametrPipe = GetCorrectNumber(1,1420);
 
 	return in;
 }
@@ -62,50 +62,13 @@ istream& operator >> (istream& in, CStation& cs)
 	cs.shopCStation = GetCorrectNumber(1,10);
 	
 	cout << "How many workshops at the compressor station? ";
-	cs.workshopCStation = GetCorrectNumber(1, cs.shopCStation);
+	cs.workshopCStation = GetCorrectNumber(0, cs.shopCStation);
 
 	
 	cout << "Input compressor station efficiency indicator [%], please: ";
 	cs.koefCStation = GetCorrectNumber(0,100);
 
 	return in;
-}
-
-void Print(Pipe p, CStation cs)
-{
-	if (p.idPipe > 0 && cs.idCStation == 0)
-	{
-		cout << "\nPipe id: " << p.idPipe << endl;
-		cout << "Pipe lenght: " << p.lenghtPipe << endl;
-		cout << "Pipe diametr: " << p.diametrPipe << endl;
-		cout << "Pipe status (1 - pipe is working ; 0 - pipe under repair): " << p.statusPipe << endl;
-	}
-	else
-		if (p.idPipe == 0 && cs.idCStation > 0)
-		{
-			cout << "Compressor Station id: " << cs.idCStation << endl;
-			cin.ignore(10000, '\n');
-			cout << "Compressor Station name: " << cs.nameCStation << endl;
-			cout << "Compressor Station shops: " << cs.shopCStation << endl;
-			cout << "Compressor Station workshops: " << cs.workshopCStation << endl;
-			cout << "Compressor Station efficiency indicator: " << cs.koefCStation << endl;
-		}
-		else
-			if (p.idPipe > 0 && cs.idCStation > 0)
-			{
-				cout << "\nPipe id: " << p.idPipe << endl;
-				cout << "Pipe lenght: " << p.lenghtPipe << endl;
-				cout << "Pipe diametr: " << p.diametrPipe << endl;
-				cout << "Pipe status (1 - pipe is working ; 0 - pipe under repair): " << p.statusPipe << endl;
-				cout << "Compressor Station id: " << cs.idCStation << endl;
-				cin.ignore(10000, '\n');
-				cout << "Compressor Station name: " << cs.nameCStation << endl;
-				cout << "Compressor Station shops: " << cs.shopCStation << endl;
-				cout << "Compressor Station workshops: " << cs.workshopCStation << endl;
-				cout << "Compressor Station efficiency indicator: " << cs.koefCStation << endl;
-			}
-			else
-				cout << "You should input objects" << endl;
 }
 
 ostream& operator << (ostream& out, const Pipe& p)
@@ -167,14 +130,14 @@ void PrintMenu()
 		<< "Choose action: "<< endl;
 }
 
-void Save(Pipe p, CStation cs)
+void Save(const Pipe& p, const CStation& cs)//!!!!!!!!!!!!!!!!
 {
 	string object;
 	ofstream fout;
 	fout.open("file.txt", ios::out);
 	if (fout.is_open())
 	{
-		if (p.idPipe > 0 && cs.idCStation == 0)
+		if (p.idPipe > 0 )
 		{
 			object = "PIPE";
 			fout << object << endl 
@@ -183,24 +146,10 @@ void Save(Pipe p, CStation cs)
 				<< p.diametrPipe << endl
 				<< p.statusPipe << endl;
 		}
-		else if (p.idPipe == 0 && cs.idCStation > 0)
+		if (cs.idCStation > 0)
 		{
 			object = "COMPRESSOR STATION";
 			fout << object << endl
-				<< cs.idCStation << endl
-				<< cs.nameCStation << endl
-				<< cs.shopCStation << endl
-				<< cs.workshopCStation << endl
-				<< cs.koefCStation << endl;
-		}
-		else if (p.idPipe > 0 && cs.idCStation > 0)
-		{
-			object = "PIPE AND COMPRESSOR STATION";
-			fout << object << endl
-				<< p.idPipe << endl
-				<< p.lenghtPipe << endl
-				<< p.diametrPipe << endl
-				<< p.statusPipe << endl
 				<< cs.idCStation << endl
 				<< cs.nameCStation << endl
 				<< cs.shopCStation << endl
@@ -229,21 +178,8 @@ void Load(Pipe& p, CStation& cs)
 				fin >> p.diametrPipe;
 				fin >> p.statusPipe;
 			}
-			else if (object == "COMPRESSOR STATION")
+			if (object == "COMPRESSOR STATION")
 			{
-				fin >> cs.idCStation;
-				fin.ignore(10000, '\n');
-				getline(fin, cs.nameCStation);
-				fin >> cs.shopCStation;
-				fin >> cs.workshopCStation;
-				fin >> cs.koefCStation;
-			}
-			else if (object == "PIPE AND COMPRESSOR STATION")
-			{
-				fin >> p.idPipe;
-				fin >> p.lenghtPipe;
-				fin >> p.diametrPipe;
-				fin >> p.statusPipe;
 				fin >> cs.idCStation;
 				fin.ignore(10000, '\n');
 				getline(fin, cs.nameCStation);
