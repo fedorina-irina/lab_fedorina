@@ -1,5 +1,38 @@
 PIPE
 1
-6
-7
+1000
+100
 1
+PIPE
+1
+500
+500
+1
+PIPE
+1
+1000
+100
+1
+PIPE
+1
+5000
+670
+1
+COMPRESSOR STATION
+1
+dfhygjyhfgt
+8
+4
+56
+COMPRESSOR STATION
+1
+ghyjuhikjughf
+4
+2
+45
+COMPRESSOR STATION
+1
+gfgghf
+8
+7
+70

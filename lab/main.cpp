@@ -2,20 +2,21 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
+#include <vector>
 
 using namespace std;
 
 struct Pipe
 {
-	int idPipe;
+	int idPipe = 0;
 	int lenghtPipe;
 	int diametrPipe;
-	bool statusPipe;
+	bool statusPipe = 1;
 };
 
 struct CStation
 {
-	int idCStation;
+	int idCStation = 0;
 	string nameCStation;
 	int shopCStation;
 	int workshopCStation;
@@ -39,8 +40,6 @@ T GetCorrectNumber(T min, T max)
 
 istream& operator >> (istream& in, Pipe& p)
 {
-	p.idPipe++;
-
 	cout << "Input pipe lenght (1 - 5000 m), please: " << endl;
 	p.lenghtPipe = GetCorrectNumber(1,5000);
 	
@@ -52,8 +51,6 @@ istream& operator >> (istream& in, Pipe& p)
 
 istream& operator >> (istream& in, CStation& cs)
 {
-	cs.idCStation++;
-
 	cout << "Input compressor station name, please: ";
 	cin.ignore(10000, '\n');
 	getline(cin, cs.nameCStation);
@@ -69,6 +66,20 @@ istream& operator >> (istream& in, CStation& cs)
 	cs.koefCStation = GetCorrectNumber(0,100);
 
 	return in;
+}
+
+Pipe& SelectPipe(vector<Pipe>& p)
+{
+	cout << "Enter pipe id: ";
+	unsigned int id = GetCorrectNumber<uint64_t>(1, p.size());
+	return p[id - 1];
+}
+
+CStation& SelectCS(vector<CStation>& cs)
+{
+	cout << "Enter compressor station id: ";
+	unsigned int id = GetCorrectNumber<uint64_t>(1, cs.size());
+	return cs[id - 1];
 }
 
 ostream& operator << (ostream& out, const Pipe& p)
@@ -130,77 +141,61 @@ void PrintMenu()
 		<< "Choose action: "<< endl;
 }
 
-void Save(const Pipe& p, const CStation& cs)//!!!!!!!!!!!!!!!!
+void SavePipe(ofstream& fout, const Pipe& p)
 {
 	string object;
-	ofstream fout;
-	fout.open("file.txt", ios::out);
-	if (fout.is_open())
-	{
-		if (p.idPipe > 0 )
-		{
-			object = "PIPE";
-			fout << object << endl 
-				<< p.idPipe << endl
-				<< p.lenghtPipe << endl
-				<< p.diametrPipe << endl
-				<< p.statusPipe << endl;
-		}
-		if (cs.idCStation > 0)
-		{
-			object = "COMPRESSOR STATION";
-			fout << object << endl
-				<< cs.idCStation << endl
-				<< cs.nameCStation << endl
-				<< cs.shopCStation << endl
-				<< cs.workshopCStation << endl
-				<< cs.koefCStation << endl;
-		}
-		else cout << "File is empty. Input objects" << endl;
-		fout.close();
-	}
+	object = "PIPE";
+	fout << object << endl
+		<< p.idPipe << endl
+		<< p.lenghtPipe << endl
+		<< p.diametrPipe << endl
+		<< p.statusPipe << endl;
 }
 
-void Load(Pipe& p, CStation& cs)
+void SaveStation(ofstream& fout, const CStation& cs)
 {
 	string object;
-	ifstream fin;
-	fin.open("file.txt", ios::in);
-	if (fin.is_open())
-	{
-		while (!fin.eof())
-		{
-			getline(fin, object);
-			if (object == "PIPE")
-			{
-				fin >> p.idPipe;
-				fin >> p.lenghtPipe;
-				fin >> p.diametrPipe;
-				fin >> p.statusPipe;
-			}
-			if (object == "COMPRESSOR STATION")
-			{
-				fin >> cs.idCStation;
-				fin.ignore(10000, '\n');
-				getline(fin, cs.nameCStation);
-				fin >> cs.shopCStation;
-				fin >> cs.workshopCStation;
-				fin >> cs.koefCStation;
-			}
-		}
-	}
-	else cout << "ERROR!" << endl;
-	fin.close();
+	object = "COMPRESSOR STATION";
+	fout << object << endl
+		<< cs.idCStation << endl
+		<< cs.nameCStation << endl
+		<< cs.shopCStation << endl
+		<< cs.workshopCStation << endl
+		<< cs.koefCStation << endl;
+}
+
+Pipe LoadPipe(ifstream& fin)
+{
+	Pipe p;
+
+	fin >> p.idPipe;
+	fin >> p.lenghtPipe;
+	fin >> p.diametrPipe;
+	fin >> p.statusPipe;
+
+	return p;
+}
+
+CStation LoadStation(ifstream& fin)
+{
+	CStation cs;
+
+	fin >> cs.idCStation;
+	fin.ignore(10000, '\n');
+	getline(fin, cs.nameCStation);
+	fin >> cs.shopCStation;
+	fin >> cs.workshopCStation;
+	fin >> cs.koefCStation;
+
+	return cs;
 }
 
 int main()
 {
-	Pipe p;
-	CStation cs;
+	vector <Pipe> pipeline;
+	vector <CStation> CSSistem;
 
-	p.idPipe = 0;
-	p.statusPipe = 1;
-	cs.idCStation = 0;
+	string object;
 
 	while (1)
 	{
@@ -211,29 +206,43 @@ int main()
 		{
 			cin.clear();
 			system("cls");
+			Pipe p;
+			p.idPipe++;
 			cin >> p;
+			pipeline.push_back(p);
 			break;
 		}
 		case 2:
 		{
 			cin.clear();
 			system("cls");
+			CStation cs;
+			cs.idCStation++;
 			cin >> cs;
+			CSSistem.push_back(cs);
 			break;
 		}
 		case 3:
 		{
 			cin.clear();
 			system("cls");
-			if ((p.idPipe != 0) && (cs.idCStation == 0))
-					cout << p;
-			else if ((p.idPipe == 0) && (cs.idCStation != 0))
-					cout << cs;
-			else if ((p.idPipe != 0) && (cs.idCStation != 0))
-			{
-				cout << p;
-				cout << cs;
-			}
+			if ((pipeline.size()!= 0) && (CSSistem.size() == 0))
+				{
+				for (auto& p : pipeline)
+					cout << p << endl;
+				}
+			else if ((pipeline.size() == 0) && (CSSistem.size() != 0))
+				{
+				for (auto& cs : CSSistem)
+					cout << cs << endl;
+				}
+			else if ((pipeline.size() != 0) && (CSSistem.size() != 0))
+				{
+				for (auto& p : pipeline)
+						cout << p << endl;
+				for (auto& cs : CSSistem)
+					cout << cs << endl;
+				}
 			else cout << "Input objects" << endl;
 			break;
 		}
@@ -241,9 +250,9 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			if (p.idPipe > 0)
+			if (pipeline.size() > 0)
 			{
-				EditPipe(p);
+				EditPipe(SelectPipe(pipeline));
 			}
 			else cout << "Input pipe" << endl;
 			break;
@@ -252,9 +261,9 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			if (cs.idCStation > 0)
+			if (CSSistem.size() > 0)
 			{
-				EditStation(cs);
+				EditStation(SelectCS(CSSistem));
 			}
 			else cout << "Input compressor station" << endl;
 			break;
@@ -263,14 +272,41 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			Save(p, cs);
+			ofstream fout;
+			fout.open("file.txt", ios::out);
+			if (fout.is_open())
+			{
+				for (Pipe& p : pipeline)
+					SavePipe(fout, p);
+				for (CStation& cs : CSSistem)
+					SaveStation(fout, cs);
+				break;
+			}
+			else
+				cout << "ERROR!" << endl;
 			break;
 		}
 		case 7:
 		{
 			cin.clear();
 			system("cls");
-			Load(p, cs);
+			string object;
+			ifstream fin;
+			fin.open("file.txt", ios::in);
+			if (fin.is_open())
+			{
+				while (!fin.eof())
+				{
+					getline(fin, object);
+					if (object == "PIPE")
+						pipeline.push_back(LoadPipe(fin));
+					if (object == "COMPRESSOR STATION")
+						CSSistem.push_back(LoadStation(fin));
+				}
+				break;
+			}
+			else
+				cout << "ERROR!" << endl;
 			break;
 		}
 		case 0:
