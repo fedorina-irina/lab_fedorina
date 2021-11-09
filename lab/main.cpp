@@ -5,6 +5,8 @@
 #include <vector>
 
 using namespace std;
+int kol_p = 0;
+int kol_cs = 0;
 
 struct Pipe
 {
@@ -40,6 +42,8 @@ T GetCorrectNumber(T min, T max)
 
 istream& operator >> (istream& in, Pipe& p)
 {
+	p.idPipe = kol_p;
+
 	cout << "Input pipe lenght (1 - 5000 m), please: " << endl;
 	p.lenghtPipe = GetCorrectNumber(1,5000);
 	
@@ -51,6 +55,8 @@ istream& operator >> (istream& in, Pipe& p)
 
 istream& operator >> (istream& in, CStation& cs)
 {
+	cs.idCStation = kol_cs;
+
 	cout << "Input compressor station name, please: ";
 	cin.ignore(10000, '\n');
 	getline(cin, cs.nameCStation);
@@ -71,15 +77,15 @@ istream& operator >> (istream& in, CStation& cs)
 Pipe& SelectPipe(vector<Pipe>& p)
 {
 	cout << "Enter pipe id: ";
-	unsigned int id = GetCorrectNumber<uint64_t>(1, p.size());
-	return p[id - 1];
+	unsigned int index = GetCorrectNumber<uint64_t>(1, p.size());
+	return p[index - 1];
 }
 
 CStation& SelectCS(vector<CStation>& cs)
 {
 	cout << "Enter compressor station id: ";
-	unsigned int id = GetCorrectNumber<uint64_t>(1, cs.size());
-	return cs[id - 1];
+	unsigned int index = GetCorrectNumber<uint64_t>(1, cs.size());
+	return cs[index - 1];
 }
 
 ostream& operator << (ostream& out, const Pipe& p)
@@ -127,6 +133,22 @@ void EditStation(CStation& cs)
 	}
 }
 
+void DeletePipe(vector<Pipe>& p)
+{
+	cout << "Enter pipe id: ";
+	int index = GetCorrectNumber<uint64_t>(1, p.size());
+	auto i = p.cbegin();
+	p.erase(i + index - 1); 
+}
+
+void DeleteStation(vector<CStation>& cs)
+{
+	cout << "Enter compressor station id: ";
+	auto index = GetCorrectNumber<uint64_t>(1, cs.size());
+	auto i = cs.cbegin();
+	cs.erase(i + index - 1);
+}
+
 void PrintMenu()
 {
 	cout << "\n***MENU***" << endl
@@ -137,6 +159,9 @@ void PrintMenu()
 		<< "5. Edit Station" << endl
 		<< "6. Save" << endl
 		<< "7. Load" << endl
+		<< "8. Delete Pipe" << endl
+		<< "9. Delete Compressor Station" << endl
+		<< "10. Search" << endl
 		<< "0. Exit" << endl
 		<< "Choose action: "<< endl;
 }
@@ -190,6 +215,21 @@ CStation LoadStation(ifstream& fin)
 	return cs;
 }
 
+vector<int>FindPipesByStatus(const vector<Pipe>& pipeline)
+{
+	cout << "Find pipes with status (1 - pipe is working ; 0 - pipe under repair):  " << endl;
+	bool statusPipe = GetCorrectNumber(0, 1);
+	vector<int>res;
+	int i = 0;
+	for (auto& p : pipeline)
+	{
+		if (p.statusPipe == statusPipe)
+			res.push_back(i);
+		i++;
+	}
+	return res;
+}
+
 int main()
 {
 	vector <Pipe> pipeline;
@@ -200,14 +240,14 @@ int main()
 	while (1)
 	{
 		PrintMenu();
-		switch (GetCorrectNumber(0,7))
+		switch (GetCorrectNumber(0,10))
 		{
 		case 1:
 		{
 			cin.clear();
 			system("cls");
 			Pipe p;
-			p.idPipe++;
+			kol_p++;
 			cin >> p;
 			pipeline.push_back(p);
 			break;
@@ -217,7 +257,7 @@ int main()
 			cin.clear();
 			system("cls");
 			CStation cs;
-			cs.idCStation++;
+			kol_cs++;
 			cin >> cs;
 			CSSistem.push_back(cs);
 			break;
@@ -307,6 +347,36 @@ int main()
 			}
 			else
 				cout << "ERROR!" << endl;
+			break;
+		}
+		case 8:
+		{
+			cin.clear();
+			system("cls");
+			if (pipeline.size() > 0)
+			{
+				DeletePipe(pipeline);
+			}
+			else cout << "Input pipe" << endl;
+			break;
+		}
+		case 9:
+		{
+			cin.clear();
+			system("cls");
+			if (CSSistem.size() > 0)
+			{
+				DeleteStation(CSSistem);
+			}
+			else cout << "Input compressor station" << endl;
+			break;
+		}
+		case 10:
+		{
+			cin.clear();
+			system("cls");
+			for (int i : FindPipesByStatus(pipeline))
+				cout << pipeline[i];
 			break;
 		}
 		case 0:
