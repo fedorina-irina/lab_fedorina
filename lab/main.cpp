@@ -215,15 +215,44 @@ CStation LoadStation(ifstream& fin)
 	return cs;
 }
 
-vector<int>FindPipesByStatus(const vector<Pipe>& pipeline)
+template<typename T>
+using Filter1 = bool(*)(const Pipe& p, T param);
+
+bool CheckByStatus(const Pipe& p, bool param)
 {
-	cout << "Find pipes with status (1 - pipe is working ; 0 - pipe under repair):  " << endl;
-	bool statusPipe = GetCorrectNumber(0, 1);
+	return p.statusPipe == param;
+}
+
+template<typename T>
+vector<int>FindPipesByFilter(const vector<Pipe>& pipeline,Filter1 <T> f, T param)
+{
 	vector<int>res;
 	int i = 0;
 	for (auto& p : pipeline)
 	{
-		if (p.statusPipe == statusPipe)
+		if (f(p,param))
+			res.push_back(i);
+		i++;
+	}
+	return res;
+}
+
+template<typename T>
+using Filter2 = bool(*)(const CStation& cs, T param);
+
+bool CheckByName(const CStation& cs, string param)
+{
+	return cs.nameCStation == param;
+}
+
+template<typename T>
+vector<int>FindCStationsByFilter(const vector<CStation>& CSSistem, Filter2 <T> f, T param)
+{
+	vector<int>res;
+	int i = 0;
+	for (auto& cs : CSSistem)
+	{
+		if (f(cs, param))
 			res.push_back(i);
 		i++;
 	}
@@ -375,8 +404,23 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			for (int i : FindPipesByStatus(pipeline))
-				cout << pipeline[i];
+			cout << "Find pipes or compressor stations by filter (1 - pipes ; 0 - compressor stations):  " << endl;
+			if (GetCorrectNumber(0, 1) == 1)
+			{
+				cout << "Find pipes with status (1 - pipe is working ; 0 - pipe under repair):  " << endl;
+				bool status = GetCorrectNumber(0, 1);
+				for (int i : FindPipesByFilter(pipeline, CheckByStatus, status))
+					cout << pipeline[i];
+			}
+			else
+			{
+				string name;
+				cout << "Find compressor stations with name:  " << endl;
+				cin.ignore(10000, '\n');
+				getline(cin, name);
+				for (int i : FindCStationsByFilter(CSSistem, CheckByName, name))
+					cout << CSSistem[i];
+			}
 			break;
 		}
 		case 0:
