@@ -111,7 +111,8 @@ Pipe LoadPipe(ifstream& fin)
 	Pipe p;
 
 	fin >> p.idPipe;
-	fin >> p.namePipe;
+	fin.ignore(10000, '\n');
+	getline(fin, p.namePipe);
 	fin >> p.lenghtPipe;
 	fin >> p.diametrPipe;
 	fin >> p.statusPipe;
@@ -342,8 +343,8 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			cout << "Find pipes or compressor stations by filter (1 - pipes ; 0 - compressor stations):  " << endl;
-			if (GetCorrectNumber(0, 1) == 1)
+			cout << "Find pipes or compressor stations by filter (1 - pipes ; 2 - compressor stations):  " << endl;
+			if (GetCorrectNumber(1, 2) == 1)
 			{
 				cout << "Find pipes by filter (1 - name ; 2 - status ; 3 - lenght ; 4 - diametr):  " << endl;
 				switch (GetCorrectNumber(1, 4))
@@ -355,7 +356,8 @@ int main()
 					cin.ignore(10000, '\n');
 					getline(cin, pname);
 					for (int i : FindPipesByFilter(pipeline, CheckByPName, pname))
-						cout << CSSistem[i];
+						cout << pipeline[i];
+					break;
 				}
 				case 2:
 				{
