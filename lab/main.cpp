@@ -87,6 +87,7 @@ void SavePipe(ofstream& fout, const Pipe& p)
 	string object;
 	object = "PIPE";
 	fout << object << endl
+		<< p.MaxIDpipe << endl
 		<< p.idPipe << endl
 		<< p.namePipe << endl
 		<< p.lenghtPipe << endl
@@ -99,6 +100,7 @@ void SaveStation(ofstream& fout, const CStation& cs)
 	string object;
 	object = "COMPRESSOR STATION";
 	fout << object << endl
+		<< cs.MaxIDcs << endl
 		<< cs.idCStation << endl
 		<< cs.nameCStation << endl
 		<< cs.shopCStation << endl
@@ -110,6 +112,7 @@ Pipe LoadPipe(ifstream& fin)
 {
 	Pipe p;
 
+	fin >> p.MaxIDpipe;
 	fin >> p.idPipe;
 	fin.ignore(10000, '\n');
 	getline(fin, p.namePipe);
@@ -124,6 +127,7 @@ CStation LoadStation(ifstream& fin)
 {
 	CStation cs;
 
+	fin >> cs.MaxIDcs;
 	fin >> cs.idCStation;
 	fin.ignore(10000, '\n');
 	getline(fin, cs.nameCStation);

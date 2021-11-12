@@ -1,42 +1,49 @@
 PIPE
+4
 1
 pipe 1
 1000
 100
-1
+0
 PIPE
+4
 2
 pipe 2
 2000
 200
-0
+1
 PIPE
+4
 3
 pipe 3
 3000
-300
-1
+30
+0
 PIPE
+4
 4
 pipe 4
 4000
 40
-0
+1
 COMPRESSOR STATION
+3
 1
 station 1
 10
 5
-70
+90
 COMPRESSOR STATION
+3
 2
 station 2
-5
-5
+8
+8
 100
 COMPRESSOR STATION
 3
+3
 station 3
-9
+5
 2
-40
+30

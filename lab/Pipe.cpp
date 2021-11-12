@@ -13,7 +13,8 @@ Pipe::Pipe()
 
 ostream& operator << (ostream& out, const Pipe& p)
 {
-	out << "Pipe id: " << p.idPipe
+	out << "\nPipe MaxID: " << Pipe::MaxIDpipe
+		<< "\nPipe id: " << p.idPipe
 		<< "\nPipe name: " << p.namePipe
 		<< "\nPipe lenght: " << p.lenghtPipe
 		<< "\nPipe diametr: " << p.diametrPipe
