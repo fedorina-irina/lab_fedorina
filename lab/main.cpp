@@ -406,8 +406,16 @@ int main()
 				}
 				case 2:
 				{
-					cout << "Find compressor stations with percent of unused shops (1 - 100 %):  " << endl;
-					double percent = GetCorrectNumber(1, 100);
+					double percent;
+					cout << "Find compressor stations with percent of unused shops (0 - 100 %):  " << endl;
+					cin >> percent;
+					while (percent < 0.0 || percent > 100.0)
+					{
+						cin.clear();
+						cin.ignore(10000, '\n');
+						cout << "ERROR! Type number (0 - 100): ";
+					}
+
 					for (int i : FindCStationsByFilter(CSSistem, CheckByPercent, percent))
 						cout << CSSistem[i];
 				}
