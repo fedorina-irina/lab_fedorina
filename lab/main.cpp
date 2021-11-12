@@ -3,76 +3,11 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include "Pipe.h"
+#include "CStation.h"
+#include "Utils.h"
 
 using namespace std;
-int kol_p = 0;
-int kol_cs = 0;
-
-struct Pipe
-{
-	int idPipe = 0;
-	int lenghtPipe;
-	int diametrPipe;
-	bool statusPipe = 1;
-};
-
-struct CStation
-{
-	int idCStation = 0;
-	string nameCStation;
-	int shopCStation;
-	int workshopCStation;
-	int koefCStation;
-};
-
-template <typename T>
-
-T GetCorrectNumber(T min, T max)
-{
-	T x;
-	while ((cin >> x).fail() || x < min || x > max || (x - int(x)) != 0 || (char(cin.peek()) == '.') || (char(cin.peek()) == ','))
-	{
-
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "ERROR! Type number (" << min << " - " << max << "): ";
-	} 
-	return x;
-}
-
-istream& operator >> (istream& in, Pipe& p)
-{
-	p.idPipe = kol_p;
-
-	cout << "Input pipe lenght (1 - 5000 m), please: " << endl;
-	p.lenghtPipe = GetCorrectNumber(1,5000);
-	
-	cout << "Input pipe diametr (1 - 1420 mm), please: " << endl;
-	p.diametrPipe = GetCorrectNumber(1,1420);
-
-	return in;
-}
-
-istream& operator >> (istream& in, CStation& cs)
-{
-	cs.idCStation = kol_cs;
-
-	cout << "Input compressor station name, please: ";
-	cin.ignore(10000, '\n');
-	getline(cin, cs.nameCStation);
-	
-	cout << "How many shops at the compressor station? (1 - 10): ";
-	cs.shopCStation = GetCorrectNumber(1,10);
-	
-	cout << "How many workshops at the compressor station? ";
-	cs.workshopCStation = GetCorrectNumber(0, cs.shopCStation);
-
-	
-	cout << "Input compressor station efficiency indicator [%], please: ";
-	cs.koefCStation = GetCorrectNumber(0,100);
-
-	return in;
-}
 
 Pipe& SelectPipe(vector<Pipe>& p)
 {
@@ -86,25 +21,6 @@ CStation& SelectCS(vector<CStation>& cs)
 	cout << "Enter compressor station id: ";
 	unsigned int index = GetCorrectNumber<uint64_t>(1, cs.size());
 	return cs[index - 1];
-}
-
-ostream& operator << (ostream& out, const Pipe& p)
-{
-	out << "Pipe id: " << p.idPipe
-		<< "\nPipe lenght: " << p.lenghtPipe
-		<< "\nPipe diametr: " << p.diametrPipe
-		<< "\nPipe status (1 - pipe is working ; 0 - pipe under repair): " << p.statusPipe << endl;
-	return out;
-}
-
-ostream& operator << (ostream& out, const CStation& cs)
-{
-	out << "\nCompressor Station id: " << cs.idCStation
-		<< "\nCompressor Station name: " << cs.nameCStation
-		<< "\nCompressor Station shops: " << cs.shopCStation
-		<< "\nCompressor Station workshops: " << cs.workshopCStation
-		<< "\nCompressor Station efficiency indicator: " << cs.koefCStation << endl;
-	return out;
 }
 
 void EditPipe(Pipe& p)
@@ -172,6 +88,7 @@ void SavePipe(ofstream& fout, const Pipe& p)
 	object = "PIPE";
 	fout << object << endl
 		<< p.idPipe << endl
+		<< p.namePipe << endl
 		<< p.lenghtPipe << endl
 		<< p.diametrPipe << endl
 		<< p.statusPipe << endl;
@@ -194,6 +111,7 @@ Pipe LoadPipe(ifstream& fin)
 	Pipe p;
 
 	fin >> p.idPipe;
+	fin >> p.namePipe;
 	fin >> p.lenghtPipe;
 	fin >> p.diametrPipe;
 	fin >> p.statusPipe;
@@ -218,9 +136,24 @@ CStation LoadStation(ifstream& fin)
 template<typename T>
 using Filter1 = bool(*)(const Pipe& p, T param);
 
+bool CheckByPName(const Pipe& p, string param)
+{
+	return p.namePipe == param;
+}
+
 bool CheckByStatus(const Pipe& p, bool param)
 {
 	return p.statusPipe == param;
+}
+
+bool CheckByLenght(const Pipe& p, int param)
+{
+	return p.lenghtPipe >= param;
+}
+
+bool CheckByDiametr(const Pipe& p, int param)
+{
+	return p.diametrPipe >= param;
 }
 
 template<typename T>
@@ -240,9 +173,15 @@ vector<int>FindPipesByFilter(const vector<Pipe>& pipeline,Filter1 <T> f, T param
 template<typename T>
 using Filter2 = bool(*)(const CStation& cs, T param);
 
-bool CheckByName(const CStation& cs, string param)
+bool CheckByCSName(const CStation& cs, string param)
 {
 	return cs.nameCStation == param;
+}
+
+bool CheckByPercent(const CStation& cs, double param)
+{
+	double percent = ((double)cs.shopCStation - (double)cs.workshopCStation) / cs.shopCStation * 100;
+	return percent >= param;
 }
 
 template<typename T>
@@ -276,7 +215,7 @@ int main()
 			cin.clear();
 			system("cls");
 			Pipe p;
-			kol_p++;
+			/*kol_p++;*/
 			cin >> p;
 			pipeline.push_back(p);
 			break;
@@ -286,7 +225,6 @@ int main()
 			cin.clear();
 			system("cls");
 			CStation cs;
-			kol_cs++;
 			cin >> cs;
 			CSSistem.push_back(cs);
 			break;
@@ -407,19 +345,67 @@ int main()
 			cout << "Find pipes or compressor stations by filter (1 - pipes ; 0 - compressor stations):  " << endl;
 			if (GetCorrectNumber(0, 1) == 1)
 			{
-				cout << "Find pipes with status (1 - pipe is working ; 0 - pipe under repair):  " << endl;
-				bool status = GetCorrectNumber(0, 1);
-				for (int i : FindPipesByFilter(pipeline, CheckByStatus, status))
-					cout << pipeline[i];
+				cout << "Find pipes by filter (1 - name ; 2 - status ; 3 - lenght ; 4 - diametr):  " << endl;
+				switch (GetCorrectNumber(1, 4))
+				{
+				case 1:
+				{
+					string pname;
+					cout << "Find pipe with name:  " << endl;
+					cin.ignore(10000, '\n');
+					getline(cin, pname);
+					for (int i : FindPipesByFilter(pipeline, CheckByPName, pname))
+						cout << CSSistem[i];
+				}
+				case 2:
+				{
+					cout << "Find pipes with status (1 - pipe is working ; 0 - pipe under repair):  " << endl;
+					bool status = GetCorrectNumber(0, 1);
+					for (int i : FindPipesByFilter(pipeline, CheckByStatus, status))
+						cout << pipeline[i];
+					break;
+				}
+				case 3:
+				{
+					cout << "Find a pipes whose length is greater than or equal to (1 - 5000 m):  " << endl;
+					int lenght = GetCorrectNumber(1, 5000);
+					for (int i : FindPipesByFilter(pipeline, CheckByLenght, lenght))
+						cout << pipeline[i];
+					break;
+				}
+				case 4:
+				{
+					cout << "Find a pipes whose diametr is greater than or equal to (1 - 1420 mm):  " << endl;
+					int diametr = GetCorrectNumber(1, 1420);
+					for (int i : FindPipesByFilter(pipeline, CheckByDiametr, diametr))
+						cout << pipeline[i];
+					break;
+				}
+				}
+				
 			}
 			else
 			{
-				string name;
-				cout << "Find compressor stations with name:  " << endl;
-				cin.ignore(10000, '\n');
-				getline(cin, name);
-				for (int i : FindCStationsByFilter(CSSistem, CheckByName, name))
-					cout << CSSistem[i];
+				cout << "Find compressor stations by filter (1 - name ; 2 - percent):  " << endl;
+				switch (GetCorrectNumber(1, 3))
+				{
+				case 1:
+				{
+					string csname;
+					cout << "Find compressor stations with name:  " << endl;
+					cin.ignore(10000, '\n');
+					getline(cin, csname);
+					for (int i : FindCStationsByFilter(CSSistem, CheckByCSName, csname))
+						cout << CSSistem[i];
+				}
+				case 2:
+				{
+					cout << "Find compressor stations with percent of unused shops (1 - 100 %):  " << endl;
+					double percent = GetCorrectNumber(1, 100);
+					for (int i : FindCStationsByFilter(CSSistem, CheckByPercent, percent))
+						cout << CSSistem[i];
+				}
+				}
 			}
 			break;
 		}
