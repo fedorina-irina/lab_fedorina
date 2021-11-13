@@ -51,6 +51,7 @@ void EditStation(CStation& cs)
 
 void DeletePipe(vector<Pipe>& p)
 {
+
 	cout << "Enter pipe id: ";
 	int index = GetCorrectNumber<uint64_t>(1, p.size());
 	auto i = p.cbegin();
@@ -172,6 +173,10 @@ vector<int>FindPipesByFilter(const vector<Pipe>& pipeline,Filter1 <T> f, T param
 			res.push_back(i);
 		i++;
 	}
+
+	if (i = pipeline.size())
+		cout << "There is no pipe with this parameter" << endl;
+
 	return res;
 }
 
@@ -200,8 +205,14 @@ vector<int>FindCStationsByFilter(const vector<CStation>& CSSistem, Filter2 <T> f
 			res.push_back(i);
 		i++;
 	}
+
+	if (i = CSSistem.size())
+		cout << "There is no compressor station with this parameter" << endl;
+
 	return res;
 }
+
+
 
 int main()
 {
@@ -220,7 +231,6 @@ int main()
 			cin.clear();
 			system("cls");
 			Pipe p;
-			/*kol_p++;*/
 			cin >> p;
 			pipeline.push_back(p);
 			break;
@@ -266,7 +276,7 @@ int main()
 			{
 				EditPipe(SelectPipe(pipeline));
 			}
-			else cout << "Input pipe" << endl;
+			else cout << "Before editing pipe you should INPUT pipe" << endl;
 			break;
 		}
 		case 5:
@@ -277,7 +287,7 @@ int main()
 			{
 				EditStation(SelectCS(CSSistem));
 			}
-			else cout << "Input compressor station" << endl;
+			else cout << "Before editing compressor station you should INPUT compressor station" << endl;
 			break;
 		}
 		case 6:
@@ -329,7 +339,7 @@ int main()
 			{
 				DeletePipe(pipeline);
 			}
-			else cout << "Input pipe" << endl;
+			else cout << "ERROR! There is no entered pipe!" << endl;
 			break;
 		}
 		case 9:
@@ -340,7 +350,7 @@ int main()
 			{
 				DeleteStation(CSSistem);
 			}
-			else cout << "Input compressor station" << endl;
+			else cout << "ERROR! There is no entered compressor station!" << endl;
 			break;
 		}
 		case 10:
