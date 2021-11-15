@@ -142,6 +142,11 @@ CStation LoadStation(ifstream& fin)
 template<typename T>
 using Filter1 = bool(*)(const Pipe& p, T param);
 
+//bool CheckByPid(const Pipe& p, int param)
+//{
+//	return p.idPipe == param;
+//}
+
 bool CheckByPName(const Pipe& p, string param)
 {
 	return p.namePipe == param;
@@ -212,7 +217,15 @@ vector<int>FindCStationsByFilter(const vector<CStation>& CSSistem, Filter2 <T> f
 	return res;
 }
 
-
+//void PacketEditPipe(vector<Pipe>& pipeline)
+//{
+//	cout << "Edit some pipes? (1 - yes ; 2 - no)";
+//	if (GetCorrectNumber(1 , 2) == 1)
+//  {
+//		vector <int> vectEditP;
+//		
+//
+//}
 
 int main()
 {
@@ -274,7 +287,7 @@ int main()
 			system("cls");
 			if (pipeline.size() > 0)
 			{
-				EditPipe(SelectPipe(pipeline));
+					EditPipe(SelectPipe(pipeline));
 			}
 			else cout << "Before editing pipe you should INPUT pipe" << endl;
 			break;
@@ -295,7 +308,11 @@ int main()
 			cin.clear();
 			system("cls");
 			ofstream fout;
-			fout.open("file.txt", ios::out);
+			string fname;
+			cout << "Enter file's name: ";
+			cin.ignore(10000, '\n');
+			getline(cin, fname);
+			fout.open(fname + ".txt", ios::out);
 			if (fout.is_open())
 			{
 				for (Pipe& p : pipeline)
@@ -314,7 +331,11 @@ int main()
 			system("cls");
 			string object;
 			ifstream fin;
-			fin.open("file.txt", ios::in);
+			string fname;
+			cout << "Enter file's name: ";
+			cin.ignore(10000, '\n');
+			getline(cin, fname);
+			fin.open(fname + ".txt", ios::in);
 			if (fin.is_open())
 			{
 				while (!fin.eof())
