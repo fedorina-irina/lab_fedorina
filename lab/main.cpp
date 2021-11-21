@@ -3,67 +3,55 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include <unordered_map>
 #include "Pipe.h"
 #include "CStation.h"
 #include "Utils.h"
 
 using namespace std;
 
-Pipe& SelectPipe(vector<Pipe>& p)
+int pID = 1;
+int csID = 1;
+
+Pipe& SelectPipe(unordered_map<int, Pipe>& p)
 {
 	cout << "Enter pipe id: ";
-	unsigned int index = GetCorrectNumber<uint64_t>(1, p.size());
-	return p[index - 1];
-}
-
-CStation& SelectCS(vector<CStation>& cs)
-{
-	cout << "Enter compressor station id: ";
-	unsigned int index = GetCorrectNumber<uint64_t>(1, cs.size());
-	return cs[index - 1];
-}
-
-void EditPipe(Pipe& p)
-{
-	cout << "Do you want to change pipe status? (1 - yes ; 0 - no) :\n";
-
-	if (GetCorrectNumber(0, 1) == 1)
-		p.statusPipe = (!p.statusPipe);
-}
-
-void EditStation(CStation& cs)
-{
-	cout << "Do you want to launch another workshop or to stop one workshop? (1 - launch / 0 - stop) :\n";
-	if (GetCorrectNumber(0, 1) == 1)
-		{
-		if (cs.workshopCStation < cs.shopCStation)
-			cs.workshopCStation++;
-		else cout << "You can't do this";
-		}
-		
+	int id = GetCorrectNumber<uint64_t>(1, p.size());
+	if (p.count(id) == 0)
+		cout << "ERROR! There is no pipe with this id\n";
 	else
-	{
-		if (cs.workshopCStation > 0)
-			cs.workshopCStation--;
-		else cout << "You can't do this";
-	}
+		return p[id];
 }
 
-void DeletePipe(vector<Pipe>& p)
+CStation& SelectCS(unordered_map<int, CStation>& cs)
+{
+	cout << "Enter compressor station id: ";
+	int id = GetCorrectNumber<uint64_t>(1, cs.size());
+	if (cs.count(id) == 0)
+		cout << "ERROR! There is no compressor station with this id\n";
+	else
+		return cs[id];
+}
+
+void DeletePipe(unordered_map<int, Pipe>& p)
 {
 
 	cout << "Enter pipe id: ";
-	int index = GetCorrectNumber<uint64_t>(1, p.size());
-	auto i = p.cbegin();
-	p.erase(i + index - 1); 
+	int id = GetCorrectNumber<uint64_t>(1, p.size());
+	if (p.count(id) == 0)
+		cout << "ERROR! There is no pipe with this id\n";
+	else
+		p.erase(id); 
 }
 
-void DeleteStation(vector<CStation>& cs)
+void DeleteStation(unordered_map<int, CStation>& cs)
 {
 	cout << "Enter compressor station id: ";
-	auto index = GetCorrectNumber<uint64_t>(1, cs.size());
-	auto i = cs.cbegin();
-	cs.erase(i + index - 1);
+	int id = GetCorrectNumber<uint64_t>(1, cs.size());
+	if (cs.count(id) == 0)
+		cout << "ERROR! There is no compressor station with this id\n";
+	else
+		cs.erase(id);
 }
 
 void PrintMenu()
@@ -79,6 +67,7 @@ void PrintMenu()
 		<< "8. Delete Pipe" << endl
 		<< "9. Delete Compressor Station" << endl
 		<< "10. Search" << endl
+		<< "11. Packet Edit Pipe" << endl
 		<< "0. Exit" << endl
 		<< "Choose action: "<< endl;
 }
@@ -89,7 +78,7 @@ void SavePipe(ofstream& fout, const Pipe& p)
 	object = "PIPE";
 	fout << object << endl
 		<< p.MaxIDpipe << endl
-		<< p.idPipe << endl
+		<< p.pID << endl
 		<< p.namePipe << endl
 		<< p.lenghtPipe << endl
 		<< p.diametrPipe << endl
@@ -114,7 +103,7 @@ Pipe LoadPipe(ifstream& fin)
 	Pipe p;
 
 	fin >> p.MaxIDpipe;
-	fin >> p.idPipe;
+	fin >> p.pID;
 	fin.ignore(10000, '\n');
 	getline(fin, p.namePipe);
 	fin >> p.lenghtPipe;
@@ -142,11 +131,6 @@ CStation LoadStation(ifstream& fin)
 template<typename T>
 using Filter1 = bool(*)(const Pipe& p, T param);
 
-//bool CheckByPid(const Pipe& p, int param)
-//{
-//	return p.idPipe == param;
-//}
-
 bool CheckByPName(const Pipe& p, string param)
 {
 	return p.namePipe == param;
@@ -168,13 +152,13 @@ bool CheckByDiametr(const Pipe& p, int param)
 }
 
 template<typename T>
-vector<int>FindPipesByFilter(const vector<Pipe>& pipeline,Filter1 <T> f, T param)
+vector<int>FindPipesByFilter(const unordered_map<int, Pipe>& pipeline,Filter1 <T> f, T param)
 {
 	vector<int>res;
 	int i = 0;
 	for (auto& p : pipeline)
 	{
-		if (f(p,param))
+		if (f(p.second,param))
 			res.push_back(i);
 		i++;
 	}
@@ -200,13 +184,13 @@ bool CheckByPercent(const CStation& cs, double param)
 }
 
 template<typename T>
-vector<int>FindCStationsByFilter(const vector<CStation>& CSSistem, Filter2 <T> f, T param)
+vector<int>FindCStationsByFilter(const unordered_map<int, CStation>& CSSistem, Filter2 <T> f, T param)
 {
 	vector<int>res;
 	int i = 0;
 	for (auto& cs : CSSistem)
 	{
-		if (f(cs, param))
+		if (f(cs.second, param))
 			res.push_back(i);
 		i++;
 	}
@@ -217,27 +201,48 @@ vector<int>FindCStationsByFilter(const vector<CStation>& CSSistem, Filter2 <T> f
 	return res;
 }
 
-//void PacketEditPipe(vector<Pipe>& pipeline)
-//{
-//	cout << "Edit some pipes? (1 - yes ; 2 - no)";
-//	if (GetCorrectNumber(1 , 2) == 1)
-//  {
-//		vector <int> vectEditP;
-//		
-//
-//}
+void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
+{
+	cout << "Edit [1] - all pipes / [2] - some pipes: ";
+	if (GetCorrectNumber(1, 2) == 1)
+	{
+		for (auto& p : pipeline)
+			Pipe:: EditPipe(p.second);
+	}
+	else
+	{
+		vector <int> vectID;
+
+		while (true)
+		{
+
+			cout << "Enter pipe's id to edit or 0 to complete: ";
+			int i = GetCorrectNumber(0, Pipe::MaxIDpipe);
+			if (i)
+				{
+				//if (pipeline[i].namePipe.empty())
+				if (pipeline.count(i) == 0)
+					cout << "ERROR! There is no pipe with this id\n";
+				else
+					vectID.push_back(i);
+				}
+			else
+				break;
+		}
+			for (int i : vectID)
+				pipeline[i].statusPipe = !pipeline[i].statusPipe;
+	}
+}
 
 int main()
 {
-	vector <Pipe> pipeline;
-	vector <CStation> CSSistem;
-
-	string object;
+	unordered_map <int, Pipe> pipeline = {};
+	unordered_map <int, CStation> CSSistem = {};
 
 	while (1)
 	{
 		PrintMenu();
-		switch (GetCorrectNumber(0,10))
+		switch (GetCorrectNumber(0,11))
 		{
 		case 1:
 		{
@@ -245,7 +250,8 @@ int main()
 			system("cls");
 			Pipe p;
 			cin >> p;
-			pipeline.push_back(p);
+			pipeline.insert({ pID, p });
+			//pID++;
 			break;
 		}
 		case 2:
@@ -254,7 +260,8 @@ int main()
 			system("cls");
 			CStation cs;
 			cin >> cs;
-			CSSistem.push_back(cs);
+			CSSistem.insert({ csID, cs });
+			csID++;
 			break;
 		}
 		case 3:
@@ -264,19 +271,19 @@ int main()
 			if ((pipeline.size()!= 0) && (CSSistem.size() == 0))
 				{
 				for (auto& p : pipeline)
-					cout << p << endl;
+					cout << p.second << endl;
 				}
 			else if ((pipeline.size() == 0) && (CSSistem.size() != 0))
 				{
 				for (auto& cs : CSSistem)
-					cout << cs << endl;
+					cout << cs.second << endl;
 				}
 			else if ((pipeline.size() != 0) && (CSSistem.size() != 0))
 				{
 				for (auto& p : pipeline)
-						cout << p << endl;
+						cout << p.second << endl;
 				for (auto& cs : CSSistem)
-					cout << cs << endl;
+					cout << cs.second << endl;
 				}
 			else cout << "Input objects" << endl;
 			break;
@@ -287,7 +294,7 @@ int main()
 			system("cls");
 			if (pipeline.size() > 0)
 			{
-					EditPipe(SelectPipe(pipeline));
+				Pipe:: EditPipe(SelectPipe(pipeline));
 			}
 			else cout << "Before editing pipe you should INPUT pipe" << endl;
 			break;
@@ -298,7 +305,7 @@ int main()
 			system("cls");
 			if (CSSistem.size() > 0)
 			{
-				EditStation(SelectCS(CSSistem));
+				CStation:: EditStation(SelectCS(CSSistem));
 			}
 			else cout << "Before editing compressor station you should INPUT compressor station" << endl;
 			break;
@@ -307,6 +314,7 @@ int main()
 		{
 			cin.clear();
 			system("cls");
+			string object;
 			ofstream fout;
 			string fname;
 			cout << "Enter file's name: ";
@@ -315,10 +323,10 @@ int main()
 			fout.open(fname + ".txt", ios::out);
 			if (fout.is_open())
 			{
-				for (Pipe& p : pipeline)
-					SavePipe(fout, p);
-				for (CStation& cs : CSSistem)
-					SaveStation(fout, cs);
+				for (auto& p : pipeline)
+					SavePipe(fout, p.second);
+				for (auto& cs : CSSistem)
+					SaveStation(fout, cs.second);
 				break;
 			}
 			else
@@ -342,9 +350,15 @@ int main()
 				{
 					getline(fin, object);
 					if (object == "PIPE")
-						pipeline.push_back(LoadPipe(fin));
+					{
+						pipeline.insert({ pID, LoadPipe(fin) });
+						pID++;
+					}
 					if (object == "COMPRESSOR STATION")
-						CSSistem.push_back(LoadStation(fin));
+					{
+						CSSistem.insert({ csID, LoadStation(fin) });
+						csID++;
+					}
 				}
 				break;
 			}
@@ -452,6 +466,13 @@ int main()
 				}
 				}
 			}
+			break;
+		}
+		case 11:
+		{
+			cin.clear();
+			system("cls");
+			PacketEditPipe(pipeline);
 			break;
 		}
 		case 0:

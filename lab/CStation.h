@@ -13,6 +13,7 @@ public:
 	int koefCStation;
 
 	CStation();
+	static void EditStation(CStation& cs);
 
 	friend std::ostream& operator << (std::ostream& out, const CStation& cs);
 	friend std::istream& operator >> (std::istream& in, CStation& cs);

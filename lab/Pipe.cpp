@@ -7,14 +7,19 @@ int Pipe::MaxIDpipe = 0;
 
 Pipe::Pipe()
 {
-	idPipe = ++MaxIDpipe;
+	pID = ++MaxIDpipe;
 	statusPipe = 1;
+}
+
+void Pipe::EditPipe(Pipe& p)
+{
+	p.statusPipe = (!p.statusPipe);
 }
 
 ostream& operator << (ostream& out, const Pipe& p)
 {
 	out << "\nPipe MaxID: " << Pipe::MaxIDpipe
-		<< "\nPipe id: " << p.idPipe
+		<< "\nPipe id: " << p.pID
 		<< "\nPipe name: " << p.namePipe
 		<< "\nPipe lenght: " << p.lenghtPipe
 		<< "\nPipe diametr: " << p.diametrPipe

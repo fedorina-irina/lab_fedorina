@@ -11,6 +11,24 @@ CStation::CStation()
 	idCStation = ++MaxIDcs;
 }
 
+void CStation:: EditStation(CStation& cs)
+{
+	cout << "Do you want to launch another workshop or to stop one workshop? (1 - launch / 0 - stop) :\n";
+	if (GetCorrectNumber(0, 1) == 1)
+	{
+		if (cs.workshopCStation < cs.shopCStation)
+			cs.workshopCStation++;
+		else cout << "You can't do this";
+	}
+
+	else
+	{
+		if (cs.workshopCStation > 0)
+			cs.workshopCStation--;
+		else cout << "You can't do this";
+	}
+}
+
 ostream& operator << (ostream& out, const CStation& cs)
 {
 	out << "\nCompressor Station MaxID: " << CStation::MaxIDcs
