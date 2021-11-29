@@ -6,7 +6,7 @@ class CStation
 {
 public:
 	static int MaxIDcs;
-	int idCStation;
+	int csID;
 	std::string nameCStation;
 	int shopCStation;
 	int workshopCStation;

@@ -6,7 +6,6 @@ class Pipe
 {
 public:
 	static int MaxIDpipe;
-	//int idPipe;
 	int pID;
 	std::string namePipe;
 	int lenghtPipe;

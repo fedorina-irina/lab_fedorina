@@ -8,7 +8,7 @@ int Pipe::MaxIDpipe = 0;
 Pipe::Pipe()
 {
 	pID = ++MaxIDpipe;
-	statusPipe = 1;
+	statusPipe = true;
 }
 
 void Pipe::EditPipe(Pipe& p)

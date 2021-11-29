@@ -8,7 +8,7 @@ int CStation::MaxIDcs = 0;
 
 CStation::CStation()
 {
-	idCStation = ++MaxIDcs;
+	csID = ++MaxIDcs;
 }
 
 void CStation:: EditStation(CStation& cs)
@@ -32,7 +32,7 @@ void CStation:: EditStation(CStation& cs)
 ostream& operator << (ostream& out, const CStation& cs)
 {
 	out << "\nCompressor Station MaxID: " << CStation::MaxIDcs
-		<< "\nCompressor Station id: " << cs.idCStation
+		<< "\nCompressor Station id: " << cs.csID
 		<< "\nCompressor Station name: " << cs.nameCStation
 		<< "\nCompressor Station shops: " << cs.shopCStation
 		<< "\nCompressor Station workshops: " << cs.workshopCStation

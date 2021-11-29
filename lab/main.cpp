@@ -33,27 +33,6 @@ CStation& SelectCS(unordered_map<int, CStation>& cs)
 		return cs[id];
 }
 
-void DeletePipe(unordered_map<int, Pipe>& p)
-{
-
-	cout << "Enter pipe id: ";
-	int id = GetCorrectNumber<uint64_t>(1, p.size());
-	if (p.count(id) == 0)
-		cout << "ERROR! There is no pipe with this id\n";
-	else
-		p.erase(id); 
-}
-
-void DeleteStation(unordered_map<int, CStation>& cs)
-{
-	cout << "Enter compressor station id: ";
-	int id = GetCorrectNumber<uint64_t>(1, cs.size());
-	if (cs.count(id) == 0)
-		cout << "ERROR! There is no compressor station with this id\n";
-	else
-		cs.erase(id);
-}
-
 void PrintMenu()
 {
 	cout << "\n***MENU***" << endl
@@ -91,7 +70,7 @@ void SaveStation(ofstream& fout, const CStation& cs)
 	object = "COMPRESSOR STATION";
 	fout << object << endl
 		<< cs.MaxIDcs << endl
-		<< cs.idCStation << endl
+		<< cs.csID << endl
 		<< cs.nameCStation << endl
 		<< cs.shopCStation << endl
 		<< cs.workshopCStation << endl
@@ -118,7 +97,7 @@ CStation LoadStation(ifstream& fin)
 	CStation cs;
 
 	fin >> cs.MaxIDcs;
-	fin >> cs.idCStation;
+	fin >> cs.csID;
 	fin.ignore(10000, '\n');
 	getline(fin, cs.nameCStation);
 	fin >> cs.shopCStation;
@@ -159,14 +138,39 @@ vector<int>FindPipesByFilter(const unordered_map<int, Pipe>& pipeline,Filter1 <T
 	for (auto& p : pipeline)
 	{
 		if (f(p.second,param))
-			res.push_back(i);
+			res.push_back(p.second.pID);
 		i++;
 	}
 
-	if (i = pipeline.size())
+	if (res.empty())
 		cout << "There is no pipe with this parameter" << endl;
 
 	return res;
+}
+
+void DeletePipe(unordered_map<int, Pipe>& p)
+{
+	cout << "Delete [1] - one pipe; [2] - pipes based on parameter <status>: ";
+	switch (GetCorrectNumber(1, 2))
+	{
+	case 1:
+	{
+		cout << "Enter pipe id: ";
+		int id = GetCorrectNumber<uint64_t>(1, p.size());
+		if (p.count(id) == 0)
+			cout << "ERROR! There is no pipe with this id\n";
+		p.erase(id);
+		break;
+	}
+	case 2:
+	{
+		cout << "Delete pipes with status (1 - pipe is working ; 0 - pipe under repair):  " << endl;
+		bool status = GetCorrectNumber(0, 1);
+		for (int i : FindPipesByFilter(p, CheckByStatus, status))
+			p.erase(i);
+		break;
+	}
+	}
 }
 
 template<typename T>
@@ -191,14 +195,24 @@ vector<int>FindCStationsByFilter(const unordered_map<int, CStation>& CSSistem, F
 	for (auto& cs : CSSistem)
 	{
 		if (f(cs.second, param))
-			res.push_back(i);
+			res.push_back(cs.second.csID);
 		i++;
 	}
 
-	if (i = CSSistem.size())
+	if (res.empty())
 		cout << "There is no compressor station with this parameter" << endl;
 
 	return res;
+}
+
+void DeleteStation(unordered_map<int, CStation>& cs)
+{
+	cout << "Enter compressor station id: ";
+	int id = GetCorrectNumber<uint64_t>(1, cs.size());
+	if (cs.count(id) == 0)
+		cout << "ERROR! There is no compressor station with this id\n";
+	else
+		cs.erase(id);
 }
 
 void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
@@ -206,8 +220,17 @@ void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
 	cout << "Edit [1] - all pipes / [2] - some pipes: ";
 	if (GetCorrectNumber(1, 2) == 1)
 	{
-		for (auto& p : pipeline)
-			Pipe:: EditPipe(p.second);
+		cout << "All pipes [1] - are working; [2] - under repair: ";
+		if (GetCorrectNumber(1, 2) == 1)
+		{
+			for (auto& p : pipeline)
+				p.second.statusPipe = 1;	
+		}
+		else
+		{
+			for (auto& p : pipeline)
+				p.second.statusPipe = 0;
+		}
 	}
 	else
 	{
@@ -220,7 +243,6 @@ void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
 			int i = GetCorrectNumber(0, Pipe::MaxIDpipe);
 			if (i)
 				{
-				//if (pipeline[i].namePipe.empty())
 				if (pipeline.count(i) == 0)
 					cout << "ERROR! There is no pipe with this id\n";
 				else
@@ -251,7 +273,6 @@ int main()
 			Pipe p;
 			cin >> p;
 			pipeline.insert({ pID, p });
-			//pID++;
 			break;
 		}
 		case 2:
@@ -261,7 +282,7 @@ int main()
 			CStation cs;
 			cin >> cs;
 			CSSistem.insert({ csID, cs });
-			csID++;
+			//csID++;
 			break;
 		}
 		case 3:
@@ -448,6 +469,7 @@ int main()
 					getline(cin, csname);
 					for (int i : FindCStationsByFilter(CSSistem, CheckByCSName, csname))
 						cout << CSSistem[i];
+					break;
 				}
 				case 2:
 				{
@@ -463,6 +485,7 @@ int main()
 
 					for (int i : FindCStationsByFilter(CSSistem, CheckByPercent, percent))
 						cout << CSSistem[i];
+					break;
 				}
 				}
 			}
