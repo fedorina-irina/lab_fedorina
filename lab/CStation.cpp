@@ -1,10 +1,16 @@
 #include "CStation.h"
 #include "Utils.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
 int CStation::MaxIDcs = 0;
+
+int CStation::GetID() const
+{
+	return csID;
+}
 
 CStation::CStation()
 {
@@ -31,9 +37,8 @@ void CStation:: EditStation(CStation& cs)
 
 ostream& operator << (ostream& out, const CStation& cs)
 {
-	out << "\nCompressor Station MaxID: " << CStation::MaxIDcs
-		<< "\nCompressor Station id: " << cs.csID
-		<< "\nCompressor Station name: " << cs.nameCStation
+	out << "\nCompressor Station id: " << cs.csID
+		 << "\nCompressor Station name: " << cs.nameCStation
 		<< "\nCompressor Station shops: " << cs.shopCStation
 		<< "\nCompressor Station workshops: " << cs.workshopCStation
 		<< "\nCompressor Station efficiency indicator: " << cs.koefCStation << endl;
@@ -56,5 +61,25 @@ istream& operator >> (istream& in, CStation& cs)
 	cout << "Input compressor station efficiency indicator [%], please: ";
 	cs.koefCStation = GetCorrectNumber(0, 100);
 
+	return in;
+}
+
+ofstream& operator << (ofstream& out, const CStation& cs)
+{
+	out << cs.GetID() << endl
+		<< cs.nameCStation << endl
+		<< cs.shopCStation << endl
+		<< cs.workshopCStation << endl
+		<< cs.koefCStation << endl;
+	return out;
+}
+
+ifstream& operator >> (ifstream& in, CStation& cs)
+{
+	in >> cs.csID;
+	in >> cs.nameCStation;
+	in >> cs.shopCStation;
+	in >> cs.workshopCStation;
+	in >> cs.koefCStation;
 	return in;
 }

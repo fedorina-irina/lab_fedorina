@@ -10,13 +10,10 @@
 
 using namespace std;
 
-int pID = 1;
-int csID = 1;
-
 Pipe& SelectPipe(unordered_map<int, Pipe>& p)
 {
 	cout << "Enter pipe id: ";
-	int id = GetCorrectNumber<uint64_t>(1, p.size());
+	int id = GetCorrectNumber<uint64_t>(1, Pipe::MaxIDpipe);
 	if (p.count(id) == 0)
 		cout << "ERROR! There is no pipe with this id\n";
 	else
@@ -26,7 +23,7 @@ Pipe& SelectPipe(unordered_map<int, Pipe>& p)
 CStation& SelectCS(unordered_map<int, CStation>& cs)
 {
 	cout << "Enter compressor station id: ";
-	int id = GetCorrectNumber<uint64_t>(1, cs.size());
+	int id = GetCorrectNumber<uint64_t>(1, CStation::MaxIDcs);
 	if (cs.count(id) == 0)
 		cout << "ERROR! There is no compressor station with this id\n";
 	else
@@ -51,60 +48,18 @@ void PrintMenu()
 		<< "Choose action: "<< endl;
 }
 
-void SavePipe(ofstream& fout, const Pipe& p)
-{
-	string object;
-	object = "PIPE";
-	fout << object << endl
-		<< p.MaxIDpipe << endl
-		<< p.pID << endl
-		<< p.namePipe << endl
-		<< p.lenghtPipe << endl
-		<< p.diametrPipe << endl
-		<< p.statusPipe << endl;
-}
-
-void SaveStation(ofstream& fout, const CStation& cs)
-{
-	string object;
-	object = "COMPRESSOR STATION";
-	fout << object << endl
-		<< cs.MaxIDcs << endl
-		<< cs.csID << endl
-		<< cs.nameCStation << endl
-		<< cs.shopCStation << endl
-		<< cs.workshopCStation << endl
-		<< cs.koefCStation << endl;
-}
-
-Pipe LoadPipe(ifstream& fin)
+void LoadPipe(ifstream& fin, unordered_map<int, Pipe>& pipeline)
 {
 	Pipe p;
-
-	fin >> p.MaxIDpipe;
-	fin >> p.pID;
-	fin.ignore(10000, '\n');
-	getline(fin, p.namePipe);
-	fin >> p.lenghtPipe;
-	fin >> p.diametrPipe;
-	fin >> p.statusPipe;
-
-	return p;
+	fin >> p;
+	pipeline.emplace(Pipe::MaxIDpipe + 1, p);
 }
 
-CStation LoadStation(ifstream& fin)
+void LoadStation(ifstream& fin, unordered_map<int, CStation>& CSSistem)
 {
 	CStation cs;
-
-	fin >> cs.MaxIDcs;
-	fin >> cs.csID;
-	fin.ignore(10000, '\n');
-	getline(fin, cs.nameCStation);
-	fin >> cs.shopCStation;
-	fin >> cs.workshopCStation;
-	fin >> cs.koefCStation;
-
-	return cs;
+	fin >> cs;
+	CSSistem.emplace(CStation::MaxIDcs + 1, cs);
 }
 
 template<typename T>
@@ -138,7 +93,7 @@ vector<int>FindPipesByFilter(const unordered_map<int, Pipe>& pipeline,Filter1 <T
 	for (auto& p : pipeline)
 	{
 		if (f(p.second,param))
-			res.push_back(p.second.pID);
+			res.push_back(p.first);
 		i++;
 	}
 
@@ -156,7 +111,7 @@ void DeletePipe(unordered_map<int, Pipe>& p)
 	case 1:
 	{
 		cout << "Enter pipe id: ";
-		int id = GetCorrectNumber<uint64_t>(1, p.size());
+		int id = GetCorrectNumber<uint64_t>(1, Pipe::MaxIDpipe);
 		if (p.count(id) == 0)
 			cout << "ERROR! There is no pipe with this id\n";
 		p.erase(id);
@@ -167,7 +122,35 @@ void DeletePipe(unordered_map<int, Pipe>& p)
 		cout << "Delete pipes with status (1 - pipe is working ; 0 - pipe under repair):  " << endl;
 		bool status = GetCorrectNumber(0, 1);
 		for (int i : FindPipesByFilter(p, CheckByStatus, status))
-			p.erase(i);
+			cout << p[i];
+		cout << "Delete [1] - all of this pipes / [2] - some pipes: ";
+		if (GetCorrectNumber(1, 2) == 1)
+		{
+			for (int i : FindPipesByFilter(p, CheckByStatus, status))
+				p.erase(i);
+		}
+		else
+		{
+			vector <int> vectID;
+
+			while (true)
+			{
+
+				cout << "Enter pipe's id to delite or 0 to complete: ";
+				int id = GetCorrectNumber(0, Pipe::MaxIDpipe);
+				if (id)
+				{
+					if (p.count(id+1) == 0)
+						cout << "ERROR! There is no pipe with this id\n";
+					else
+						vectID.push_back(id);
+				}
+				else
+					break;
+			}
+			for (int id : vectID)
+				p.erase(id+1);			
+		}
 		break;
 	}
 	}
@@ -195,7 +178,7 @@ vector<int>FindCStationsByFilter(const unordered_map<int, CStation>& CSSistem, F
 	for (auto& cs : CSSistem)
 	{
 		if (f(cs.second, param))
-			res.push_back(cs.second.csID);
+			res.push_back(cs.first);
 		i++;
 	}
 
@@ -208,7 +191,7 @@ vector<int>FindCStationsByFilter(const unordered_map<int, CStation>& CSSistem, F
 void DeleteStation(unordered_map<int, CStation>& cs)
 {
 	cout << "Enter compressor station id: ";
-	int id = GetCorrectNumber<uint64_t>(1, cs.size());
+	int id = GetCorrectNumber<uint64_t>(1, CStation::MaxIDcs);
 	if (cs.count(id) == 0)
 		cout << "ERROR! There is no compressor station with this id\n";
 	else
@@ -240,7 +223,7 @@ void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
 		{
 
 			cout << "Enter pipe's id to edit or 0 to complete: ";
-			int i = GetCorrectNumber(0, Pipe::MaxIDpipe);
+			int i = GetCorrectNumber(0, (int)pipeline.size());
 			if (i)
 				{
 				if (pipeline.count(i) == 0)
@@ -261,6 +244,7 @@ int main()
 	unordered_map <int, Pipe> pipeline = {};
 	unordered_map <int, CStation> CSSistem = {};
 
+
 	while (1)
 	{
 		PrintMenu();
@@ -268,21 +252,20 @@ int main()
 		{
 		case 1:
 		{
+			Pipe p;
 			cin.clear();
 			system("cls");
-			Pipe p;
 			cin >> p;
-			pipeline.insert({ pID, p });
+			pipeline.emplace(pipeline.size() + 1, p);
 			break;
 		}
 		case 2:
 		{
+			CStation cs;
 			cin.clear();
 			system("cls");
-			CStation cs;
 			cin >> cs;
-			CSSistem.insert({ csID, cs });
-			//csID++;
+			CSSistem.emplace(CSSistem.size() + 1, cs);
 			break;
 		}
 		case 3:
@@ -291,20 +274,32 @@ int main()
 			system("cls");
 			if ((pipeline.size()!= 0) && (CSSistem.size() == 0))
 				{
-				for (auto& p : pipeline)
-					cout << p.second << endl;
+				for (const auto& [pID, p] : pipeline)
+				{
+					cout << pID;
+					cout << p << endl;
+				}
 				}
 			else if ((pipeline.size() == 0) && (CSSistem.size() != 0))
+			{
+				for (const auto& [csID, cs] : CSSistem)
 				{
-				for (auto& cs : CSSistem)
-					cout << cs.second << endl;
+					cout << csID;
+					cout << cs << endl;
 				}
+			}
 			else if ((pipeline.size() != 0) && (CSSistem.size() != 0))
 				{
-				for (auto& p : pipeline)
-						cout << p.second << endl;
-				for (auto& cs : CSSistem)
-					cout << cs.second << endl;
+				for (const auto& [pID, p] : pipeline)
+				{
+					cout << pID;
+					cout << p << endl;
+				}
+				for (const auto& [csID, cs] : CSSistem)
+				{
+					cout << csID;
+					cout << cs << endl;
+				}
 				}
 			else cout << "Input objects" << endl;
 			break;
@@ -344,10 +339,13 @@ int main()
 			fout.open(fname + ".txt", ios::out);
 			if (fout.is_open())
 			{
-				for (auto& p : pipeline)
-					SavePipe(fout, p.second);
-				for (auto& cs : CSSistem)
-					SaveStation(fout, cs.second);
+				fout << pipeline.size() << endl;
+				for (const auto& [pID, p] : pipeline)
+					fout << p;
+				fout << CSSistem.size() << endl;
+				for (const auto& [csID, cs] : CSSistem)
+					fout << cs;
+				fout.close();
 				break;
 			}
 			else
@@ -358,7 +356,6 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			string object;
 			ifstream fin;
 			string fname;
 			cout << "Enter file's name: ";
@@ -367,24 +364,22 @@ int main()
 			fin.open(fname + ".txt", ios::in);
 			if (fin.is_open())
 			{
-				while (!fin.eof())
+				int i;
+				fin >> i;
+				while (i != 0)
 				{
-					getline(fin, object);
-					if (object == "PIPE")
-					{
-						pipeline.insert({ pID, LoadPipe(fin) });
-						pID++;
-					}
-					if (object == "COMPRESSOR STATION")
-					{
-						CSSistem.insert({ csID, LoadStation(fin) });
-						csID++;
-					}
+						LoadPipe(fin, pipeline);
+					--i;
 				}
-				break;
+				int j;
+				fin >> j;
+				while (j != 0)
+				{
+					LoadStation(fin, CSSistem);
+					--j;
+				}
 			}
-			else
-				cout << "ERROR!" << endl;
+			fin.close();
 			break;
 		}
 		case 8:

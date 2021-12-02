@@ -5,6 +5,11 @@ using namespace std;
 
 int Pipe::MaxIDpipe = 0;
 
+int Pipe::GetID() const
+{
+	return pID;
+}
+
 Pipe::Pipe()
 {
 	pID = ++MaxIDpipe;
@@ -18,8 +23,7 @@ void Pipe::EditPipe(Pipe& p)
 
 ostream& operator << (ostream& out, const Pipe& p)
 {
-	out << "\nPipe MaxID: " << Pipe::MaxIDpipe
-		<< "\nPipe id: " << p.pID
+	out << "\nPipe id: " << p.pID
 		<< "\nPipe name: " << p.namePipe
 		<< "\nPipe lenght: " << p.lenghtPipe
 		<< "\nPipe diametr: " << p.diametrPipe
@@ -39,5 +43,25 @@ istream& operator >> (istream& in, Pipe& p)
 	cout << "Input pipe diametr (1 - 1420 mm), please: " << endl;
 	p.diametrPipe = GetCorrectNumber(1, 1420);
 
+	return in;
+}
+
+ofstream& operator << (ofstream& out, const Pipe& p)
+{
+	out << p.GetID() << endl
+		<< p.namePipe << endl
+		<< p.lenghtPipe << endl
+		<< p.diametrPipe << endl
+		<< p.statusPipe << endl;
+	return out;
+}
+
+ifstream& operator >> (ifstream& in, Pipe& p)
+{
+	in >> p.pID;
+	in >> p.namePipe;
+	in >> p.lenghtPipe;
+	in >> p.diametrPipe;
+	in >> p.statusPipe;
 	return in;
 }
