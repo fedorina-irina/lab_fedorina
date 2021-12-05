@@ -48,18 +48,68 @@ void PrintMenu()
 		<< "Choose action: "<< endl;
 }
 
-void LoadPipe(ifstream& fin, unordered_map<int, Pipe>& pipeline)
+//void LoadPipe(ifstream& fin, unordered_map<int, Pipe>& pipeline)
+//{
+//	Pipe p;
+//	fin >> p;
+//	pipeline.emplace(Pipe::MaxIDpipe + 1, p);
+//}
+//
+//void LoadStation(ifstream& fin, unordered_map<int, CStation>& CSSistem)
+//{
+//	CStation cs;
+//	fin >> cs;
+//	CSSistem.emplace(CStation::MaxIDcs + 1, cs);
+//}
+
+void Load(ifstream& fin, unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>& CSSistem)
 {
 	Pipe p;
-	fin >> p;
-	pipeline.emplace(Pipe::MaxIDpipe + 1, p);
-}
-
-void LoadStation(ifstream& fin, unordered_map<int, CStation>& CSSistem)
-{
 	CStation cs;
-	fin >> cs;
-	CSSistem.emplace(CStation::MaxIDcs + 1, cs);
+	int i = 0;
+	int kol_p;
+	fin >> kol_p;
+	for (int k = 1; k <= kol_p; k++)
+	{
+		fin >> p;
+		for (auto& [pID, pipe] : pipeline)
+		{
+			if (p.GetID() == pID)
+			{
+				i++;
+			}
+		}
+		if (i == 0)
+		{
+			p.MaxIDpipe++;
+			pipeline.emplace(p.GetID(), p);
+		}
+		else
+		{
+			i = 0;
+		}
+	}
+
+	int j = 0;
+	int kol_cs;
+	fin >> kol_cs;
+	while (kol_cs != 0)
+	{
+		fin >> cs;
+		for (auto& [csID, station] : CSSistem)
+		{
+			if (cs.GetID() == csID)
+				j++;
+		}
+		if (j == 0)
+		{
+			cs.MaxIDcs++; 
+			CSSistem.emplace(cs.GetID(), cs);
+		}
+		else
+			j = 0;
+		--kol_cs;
+	}
 }
 
 template<typename T>
@@ -121,35 +171,45 @@ void DeletePipe(unordered_map<int, Pipe>& p)
 	{
 		cout << "Delete pipes with status (1 - pipe is working ; 0 - pipe under repair):  " << endl;
 		bool status = GetCorrectNumber(0, 1);
-		for (int i : FindPipesByFilter(p, CheckByStatus, status))
-			cout << p[i];
+		vector <int> vectID = FindPipesByFilter(p, CheckByStatus, status);
+		for (auto& pID : vectID)
+			cout << pID << p[pID] << endl;
+
 		cout << "Delete [1] - all of this pipes / [2] - some pipes: ";
 		if (GetCorrectNumber(1, 2) == 1)
 		{
-			for (int i : FindPipesByFilter(p, CheckByStatus, status))
-				p.erase(i);
+			for (auto& pID : vectID)
+				p.erase(pID);
 		}
 		else
 		{
-			vector <int> vectID;
-
 			while (true)
 			{
-
+				int i = 0;
+				int id;
 				cout << "Enter pipe's id to delite or 0 to complete: ";
-				int id = GetCorrectNumber(0, Pipe::MaxIDpipe);
+				cin >> id;
 				if (id)
 				{
-					if (p.count(id+1) == 0)
-						cout << "ERROR! There is no pipe with this id\n";
+					for (auto& pID : vectID)
+					{
+						if (id == pID)
+						{
+							i++;
+						}
+					}
+					if (i == 0)
+					{
+						cout << "ERROR!";
+					}
 					else
-						vectID.push_back(id);
+					{
+						p.erase(id);
+					}
 				}
 				else
 					break;
-			}
-			for (int id : vectID)
-				p.erase(id+1);			
+			}	
 		}
 		break;
 	}
@@ -244,7 +304,6 @@ int main()
 	unordered_map <int, Pipe> pipeline = {};
 	unordered_map <int, CStation> CSSistem = {};
 
-
 	while (1)
 	{
 		PrintMenu();
@@ -256,7 +315,7 @@ int main()
 			cin.clear();
 			system("cls");
 			cin >> p;
-			pipeline.emplace(pipeline.size() + 1, p);
+			pipeline.emplace(p.MaxIDpipe, p);
 			break;
 		}
 		case 2:
@@ -265,7 +324,7 @@ int main()
 			cin.clear();
 			system("cls");
 			cin >> cs;
-			CSSistem.emplace(CSSistem.size() + 1, cs);
+			CSSistem.emplace(cs.MaxIDcs, cs);
 			break;
 		}
 		case 3:
@@ -364,22 +423,9 @@ int main()
 			fin.open(fname + ".txt", ios::in);
 			if (fin.is_open())
 			{
-				int i;
-				fin >> i;
-				while (i != 0)
-				{
-						LoadPipe(fin, pipeline);
-					--i;
-				}
-				int j;
-				fin >> j;
-				while (j != 0)
-				{
-					LoadStation(fin, CSSistem);
-					--j;
-				}
+				Load(fin, pipeline, CSSistem);
+				fin.close();
 			}
-			fin.close();
 			break;
 		}
 		case 8:

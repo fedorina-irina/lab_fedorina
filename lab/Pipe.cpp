@@ -10,11 +10,15 @@ int Pipe::GetID() const
 	return pID;
 }
 
-Pipe::Pipe()
+void Pipe::SetID()
 {
 	pID = ++MaxIDpipe;
-	statusPipe = true;
 }
+
+//Pipe::Pipe()
+//{
+//	pID = ++MaxIDpipe;
+//}
 
 void Pipe::EditPipe(Pipe& p)
 {
@@ -33,6 +37,8 @@ ostream& operator << (ostream& out, const Pipe& p)
 
 istream& operator >> (istream& in, Pipe& p)
 {
+	p.SetID();
+
 	cout << "Input pipe name, please: ";
 	cin.ignore(10000, '\n');
 	getline(cin, p.namePipe);
@@ -42,6 +48,8 @@ istream& operator >> (istream& in, Pipe& p)
 
 	cout << "Input pipe diametr (1 - 1420 mm), please: " << endl;
 	p.diametrPipe = GetCorrectNumber(1, 1420);
+
+	p.statusPipe = true;
 
 	return in;
 }

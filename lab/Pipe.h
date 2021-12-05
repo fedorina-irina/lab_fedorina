@@ -14,7 +14,9 @@ public:
 	bool statusPipe;
 
 	int GetID() const;
-	Pipe();
+	void SetID();
+
+	//Pipe();
 
 	static void EditPipe(Pipe& p);
 	
