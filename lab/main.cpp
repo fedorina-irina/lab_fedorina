@@ -40,27 +40,13 @@ void PrintMenu()
 		<< "5. Edit Station" << endl
 		<< "6. Save" << endl
 		<< "7. Load" << endl
-		<< "8. Delete Pipe" << endl
+		<< "8. Delete Pipe or some pipes" << endl
 		<< "9. Delete Compressor Station" << endl
 		<< "10. Search" << endl
 		<< "11. Packet Edit Pipe" << endl
 		<< "0. Exit" << endl
 		<< "Choose action: "<< endl;
 }
-
-//void LoadPipe(ifstream& fin, unordered_map<int, Pipe>& pipeline)
-//{
-//	Pipe p;
-//	fin >> p;
-//	pipeline.emplace(Pipe::MaxIDpipe + 1, p);
-//}
-//
-//void LoadStation(ifstream& fin, unordered_map<int, CStation>& CSSistem)
-//{
-//	CStation cs;
-//	fin >> cs;
-//	CSSistem.emplace(CStation::MaxIDcs + 1, cs);
-//}
 
 void Load(ifstream& fin, unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>& CSSistem)
 {
@@ -175,41 +161,48 @@ void DeletePipe(unordered_map<int, Pipe>& p)
 		for (auto& pID : vectID)
 			cout << pID << p[pID] << endl;
 
-		cout << "Delete [1] - all of this pipes / [2] - some pipes: ";
-		if (GetCorrectNumber(1, 2) == 1)
+		if (vectID.empty())
 		{
-			for (auto& pID : vectID)
-				p.erase(pID);
+			break;
 		}
 		else
 		{
-			while (true)
+			cout << "Delete [1] - all of this pipes / [2] - some pipes: ";
+			if (GetCorrectNumber(1, 2) == 1)
 			{
-				int i = 0;
-				int id;
-				cout << "Enter pipe's id to delite or 0 to complete: ";
-				cin >> id;
-				if (id)
+				for (auto& pID : vectID)
+					p.erase(pID);
+			}
+			else
+			{
+				while (true)
 				{
-					for (auto& pID : vectID)
+					int i = 0;
+					int id;
+					cout << "Enter pipe's id to delete or 0 to complete: ";
+					cin >> id;
+					if (id)
 					{
-						if (id == pID)
+						for (auto& pID : vectID)
 						{
-							i++;
+							if (id == pID)
+							{
+								i++;
+							}
+						}
+						if (i == 0)
+						{
+							cout << "ERROR! There is no pipe with this status and this id";
+						}
+						else
+						{
+							p.erase(id);
 						}
 					}
-					if (i == 0)
-					{
-						cout << "ERROR!";
-					}
 					else
-					{
-						p.erase(id);
-					}
+						break;
 				}
-				else
-					break;
-			}	
+			}
 		}
 		break;
 	}
