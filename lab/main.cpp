@@ -312,15 +312,15 @@ void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
 
 ///////////// lab3
 
-void Connection(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>& CSSistem)
+void Connect(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>& CSSistem)
 {
 	if ((pipeline.size() > 0) && (CSSistem.size() > 0))
 	{
 		int IDpipeConnect = Proverka(pipeline, "Enter pipe's id to connect: ", "ERROR! Try again", 1, Pipe::MaxIDpipe, 0);
-		int IDout = Proverka(CSSistem, "Enter compressor station's id you want to pipe out: ", "ERROR! Try again", 1, CStation::MaxIDcs, 0);
-		int IDin = Proverka(CSSistem, "Enter compressor station's id you want to pipe in: ", "ERROR! Try again", 1, CStation::MaxIDcs, IDout);
 		if (pipeline[IDpipeConnect].CSidIN == 0 && pipeline[IDpipeConnect].CSidOUT == 0)
 		{
+			int IDout = Proverka(CSSistem, "Enter compressor station's id you want to pipe out: ", "ERROR! Try again", 1, CStation::MaxIDcs, 0);
+			int IDin = Proverka(CSSistem, "Enter compressor station's id you want to pipe in: ", "ERROR! Try again", 1, CStation::MaxIDcs, IDout);
 			pipeline[IDpipeConnect].CSidIN = IDin;
 			pipeline[IDpipeConnect].CSidOUT = IDout;
 			CSSistem[IDin].STzahoda += 1;
@@ -354,6 +354,27 @@ void PrintSystem(unordered_map<int, Pipe>& pipeline)
 			cout << "Pipe isn't connected" << endl;
 		}
 	}
+}
+
+void Disconnect(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>& CSSistem)
+{
+	if (pipeline.size() > 0)
+	{
+		int IDpipeDisconnect = Proverka(pipeline, "Enter pipe's id to disconnect: ", "ERROR! Try again", 1, Pipe::MaxIDpipe, 0);
+		if (pipeline[IDpipeDisconnect].CSidIN == 0)
+		{
+			cout << "Pipe isn't connected\n" << endl;
+		}
+		else
+		{
+			pipeline[IDpipeDisconnect].CSidIN = 0;
+			pipeline[IDpipeDisconnect].CSidOUT = 0;
+			CSSistem[pipeline[IDpipeDisconnect].CSidIN].STzahoda -= 1;
+			CSSistem[pipeline[IDpipeDisconnect].CSidOUT].STishoda -= 1;
+		}
+	}
+	else
+		cout << "Trere is no pipe";
 }
 
 int main()
@@ -600,14 +621,14 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			cout << "Choose: [1] - to connect CSs with pipes; [2] - to show connections: \n";
-			switch (GetCorrectNumber(1, 2))
+			cout << "Choose: [1] - to connect CSs with pipes; [2] - to show connections; [3] - to disconnect CSs with pipes: \n";
+			switch (GetCorrectNumber(1, 3))
 			{
 			case 1:
 			{
 				cin.clear();
 				system("cls");
-				Connection(pipeline, CSSistem);
+				Connect(pipeline, CSSistem);
 				break;
 			}
 			case 2:
@@ -615,6 +636,13 @@ int main()
 				cin.clear();
 				system("cls");
 				PrintSystem(pipeline);
+				break;
+			}
+			case 3:
+			{
+				cin.clear();
+				system("cls");
+				Disconnect(pipeline, CSSistem);
 				break;
 			}
 			}
