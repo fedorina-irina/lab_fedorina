@@ -12,8 +12,8 @@ public:
 	int lenghtPipe;
 	int diametrPipe;
 	bool statusPipe;
-	int CSidIN = 0;
-	int CSidOUT = 0;
+	int CSidOUT;
+	int CSidIN;
 
 	int GetID() const;
 	void SetID();

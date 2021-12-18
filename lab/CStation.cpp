@@ -37,11 +37,13 @@ void CStation:: EditStation(CStation& cs)
 
 ostream& operator << (ostream& out, const CStation& cs)
 {
-	out << "\nCompressor Station id: " << cs.csID
-		 << "\nCompressor Station name: " << cs.nameCStation
-		<< "\nCompressor Station shops: " << cs.shopCStation
-		<< "\nCompressor Station workshops: " << cs.workshopCStation
-		<< "\nCompressor Station efficiency indicator: " << cs.koefCStation << endl;
+	out << "\nCompressor Station's id: " << cs.csID
+		 << "\nCompressor Station's name: " << cs.nameCStation
+		<< "\nCompressor Station's shops: " << cs.shopCStation
+		<< "\nCompressor Station's workshops: " << cs.workshopCStation
+		<< "\nCompressor Station's efficiency indicator: " << cs.koefCStation 
+		<< "\nCompressor Station's degree of outcome: " << cs.STishoda
+		<< "\nCompressor Station's degree of income: " << cs.STzahoda << endl;
 	return out;
 }
 
@@ -49,7 +51,7 @@ istream& operator >> (istream& in, CStation& cs)
 {
 	cs.SetID();
 
-	cout << "Input compressor station name, please: ";
+	cout << "Input compressor station's name, please: ";
 	cin.ignore(10000, '\n');
 	getline(cin, cs.nameCStation);
 
@@ -60,8 +62,11 @@ istream& operator >> (istream& in, CStation& cs)
 	cs.workshopCStation = GetCorrectNumber(0, cs.shopCStation);
 
 
-	cout << "Input compressor station efficiency indicator [%], please: ";
+	cout << "Input compressor station's efficiency indicator [%], please: ";
 	cs.koefCStation = GetCorrectNumber(0, 100);
+
+	cs.STishoda = 0;
+	cs.STzahoda = 0;
 
 	return in;
 }
@@ -72,7 +77,9 @@ ofstream& operator << (ofstream& out, const CStation& cs)
 		<< cs.nameCStation << endl
 		<< cs.shopCStation << endl
 		<< cs.workshopCStation << endl
-		<< cs.koefCStation << endl;
+		<< cs.koefCStation << endl
+		<< cs.STishoda << endl
+		<< cs.STzahoda << endl;
 	return out;
 }
 
@@ -83,5 +90,7 @@ ifstream& operator >> (ifstream& in, CStation& cs)
 	in >> cs.shopCStation;
 	in >> cs.workshopCStation;
 	in >> cs.koefCStation;
+	in >> cs.STishoda;
+	in >> cs.STzahoda;
 	return in;
 }
