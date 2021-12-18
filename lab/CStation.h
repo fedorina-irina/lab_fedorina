@@ -12,6 +12,8 @@ public:
 	int shopCStation;
 	int workshopCStation;
 	int koefCStation;
+	int STishoda = 0;
+	int STzahoda = 0;
 
 	int GetID() const;
 	CStation();

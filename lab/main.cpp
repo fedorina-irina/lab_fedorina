@@ -309,6 +309,33 @@ void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
 	}
 }
 
+///////////// lab3
+
+void Connection(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>& CSSistem)
+{
+	if ((pipeline.size() != 0) && (CSSistem.size() == 0))
+	{
+		int IDpipeConnect = Proverka(pipeline, "Enter pipe's id to connect: ", "ERROR! Try again", 1, Pipe::MaxIDpipe, 0);
+		int IDout = Proverka(CSSistem, "Enter compressor station's id you want to pipe out: ", "ERROR! Try again", 1, CStation::MaxIDcs, 0);
+		int IDin = Proverka(CSSistem, "Enter compressor station's id you want to pipe in: ", "ERROR! Try again", 1, CStation::MaxIDcs, IDout);
+		if (pipeline[IDpipeConnect].CSidIN == 0 && pipeline[IDpipeConnect].CSidOUT == 0)
+		{
+			pipeline[IDpipeConnect].CSidIN = IDin;
+			pipeline[IDpipeConnect].CSidOUT = IDout;
+			CSSistem[IDin].STzahoda += 1;
+			CSSistem[IDout].STishoda += 1;
+		}
+		else
+		{
+			cout << "Pipe has been already connected";
+		}
+	}
+	else
+	{
+		cout << "Trere are not enough pipes and compressor stations to make connection";
+	}
+}
+
 int main()
 {
 	unordered_map <int, Pipe> pipeline = {};
