@@ -12,7 +12,7 @@ int CStation::GetID() const
 	return csID;
 }
 
-CStation::CStation()
+void CStation::SetID()
 {
 	csID = ++MaxIDcs;
 }
@@ -47,6 +47,8 @@ ostream& operator << (ostream& out, const CStation& cs)
 
 istream& operator >> (istream& in, CStation& cs)
 {
+	cs.SetID();
+
 	cout << "Input compressor station name, please: ";
 	cin.ignore(10000, '\n');
 	getline(cin, cs.nameCStation);

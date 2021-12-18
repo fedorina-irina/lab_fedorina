@@ -16,7 +16,7 @@ public:
 	int STzahoda = 0;
 
 	int GetID() const;
-	CStation();
+	void SetID();
 	static void EditStation(CStation& cs);
 
 	friend std::ostream& operator << (std::ostream& out, const CStation& cs);

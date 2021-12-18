@@ -23,16 +23,15 @@ int Proverka(std::unordered_map<int, T>& map ,std::string textIN, std::string te
 {
 	int x;
 	std::cout << textIN;
-	std::cin >> x;
-	while (!std::cin || x < min || x > max || x == NEravno)
+	while ((std::cin >> x).fail() || x < min || x > max || x == NEravno)
 	{
 
 		std::cin.clear();
 		std::cin.ignore(10000, '\n');
 		std::cout << textError << "\n";
+		if (map.count(x) == 0)
+			std::cout << "ERROR! There is no object with this id\n";
 	}
-	if (map.count(x) == 0)
-		std::cout << "ERROR! There is no object with this id\n";
 
 	return x;
 }

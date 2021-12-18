@@ -44,6 +44,7 @@ void PrintMenu()
 		<< "9. Delete Compressor Station" << endl
 		<< "10. Search" << endl
 		<< "11. Packet Edit Pipe" << endl
+		<< "12. Gaz Transtort System" << endl
 		<< "0. Exit" << endl
 		<< "Choose action: "<< endl;
 }
@@ -313,7 +314,7 @@ void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
 
 void Connection(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>& CSSistem)
 {
-	if ((pipeline.size() != 0) && (CSSistem.size() == 0))
+	if ((pipeline.size() > 0) && (CSSistem.size() > 0))
 	{
 		int IDpipeConnect = Proverka(pipeline, "Enter pipe's id to connect: ", "ERROR! Try again", 1, Pipe::MaxIDpipe, 0);
 		int IDout = Proverka(CSSistem, "Enter compressor station's id you want to pipe out: ", "ERROR! Try again", 1, CStation::MaxIDcs, 0);
@@ -336,6 +337,25 @@ void Connection(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>
 	}
 }
 
+void PrintSystem(unordered_map<int, Pipe>& pipeline)
+{
+	for (auto& p : pipeline)
+	{
+		if (p.second.CSidIN > 0 && p.second.CSidOUT > 0)
+		{
+			cout << "\nPipe's ID: " << p.first << endl;
+			cout << "Pipe is connected" << endl;
+			cout << "CS's IDout: " << p.second.CSidOUT << endl;
+			cout << "CS's IDin: " << p.second.CSidIN << endl;
+		}
+		else
+		{
+			cout << "\nPipe's ID: " << p.first << endl;
+			cout << "Pipe isn't connected" << endl;
+		}
+	}
+}
+
 int main()
 {
 	unordered_map <int, Pipe> pipeline = {};
@@ -344,7 +364,7 @@ int main()
 	while (1)
 	{
 		PrintMenu();
-		switch (GetCorrectNumber(0,11))
+		switch (GetCorrectNumber(0, 12))
 		{
 		case 1:
 		{
@@ -368,14 +388,14 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			if ((pipeline.size()!= 0) && (CSSistem.size() == 0))
-				{
+			if ((pipeline.size() != 0) && (CSSistem.size() == 0))
+			{
 				for (const auto& [pID, p] : pipeline)
 				{
 					cout << pID;
 					cout << p << endl;
 				}
-				}
+			}
 			else if ((pipeline.size() == 0) && (CSSistem.size() != 0))
 			{
 				for (const auto& [csID, cs] : CSSistem)
@@ -385,7 +405,7 @@ int main()
 				}
 			}
 			else if ((pipeline.size() != 0) && (CSSistem.size() != 0))
-				{
+			{
 				for (const auto& [pID, p] : pipeline)
 				{
 					cout << pID;
@@ -396,7 +416,7 @@ int main()
 					cout << csID;
 					cout << cs << endl;
 				}
-				}
+			}
 			else cout << "Input objects" << endl;
 			break;
 		}
@@ -417,7 +437,7 @@ int main()
 			system("cls");
 			if (CSSistem.size() > 0)
 			{
-				CStation:: EditStation(SelectCS(CSSistem));
+				CStation::EditStation(SelectCS(CSSistem));
 			}
 			else cout << "Before editing compressor station you should INPUT compressor station" << endl;
 			break;
@@ -532,7 +552,7 @@ int main()
 					break;
 				}
 				}
-				
+
 			}
 			else
 			{
@@ -576,6 +596,30 @@ int main()
 			PacketEditPipe(pipeline);
 			break;
 		}
+		case 12:
+		{
+			cin.clear();
+			system("cls");
+			cout << "Choose: [1] - to connect CSs with pipes; [2] - to show connections: \n";
+			switch (GetCorrectNumber(1, 2))
+			{
+			case 1:
+			{
+				cin.clear();
+				system("cls");
+				Connection(pipeline, CSSistem);
+				break;
+			}
+			case 2:
+			{
+				cin.clear();
+				system("cls");
+				PrintSystem(pipeline);
+				break;
+			}
+			}
+			break;
+		}
 		case 0:
 		{
 			return 0;
@@ -583,6 +627,6 @@ int main()
 
 		}
 	}
-	
+
 	return 0;
 }
