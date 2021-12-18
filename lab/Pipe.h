@@ -16,9 +16,7 @@ public:
 	int GetID() const;
 	void SetID();
 
-	//Pipe();
-
-	static void EditPipe(Pipe& p);
+	void EditPipe();
 	
 	friend std::ostream& operator << (std::ostream& out, const Pipe& p);
 	friend std::istream& operator >> (std::istream& in, Pipe& p);

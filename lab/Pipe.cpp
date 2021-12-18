@@ -15,14 +15,9 @@ void Pipe::SetID()
 	pID = ++MaxIDpipe;
 }
 
-//Pipe::Pipe()
-//{
-//	pID = ++MaxIDpipe;
-//}
-
-void Pipe::EditPipe(Pipe& p)
+void Pipe::EditPipe()
 {
-	p.statusPipe = (!p.statusPipe);
+	statusPipe = (!statusPipe);
 }
 
 ostream& operator << (ostream& out, const Pipe& p)

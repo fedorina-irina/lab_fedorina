@@ -272,9 +272,9 @@ void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
 	{
 		vector <int> vectID;
 
+
 		while (true)
 		{
-
 			cout << "Enter pipe's id to edit or 0 to complete: ";
 			int i = GetCorrectNumber(0, (int)pipeline.size());
 			if (i)
@@ -282,7 +282,24 @@ void PacketEditPipe(unordered_map<int, Pipe>& pipeline)
 				if (pipeline.count(i) == 0)
 					cout << "ERROR! There is no pipe with this id\n";
 				else
-					vectID.push_back(i);
+				{
+					int k = 0;
+					for (auto& pID : vectID)
+					{
+						if (i == pID)
+						{
+							k++;
+						}
+					}
+					if (k == 0)
+					{
+						vectID.push_back(i);
+					}
+					else
+					{
+						cout << "ERROR! You have already edit this pipe\n ";
+					}
+				}
 				}
 			else
 				break;
@@ -362,7 +379,7 @@ int main()
 			system("cls");
 			if (pipeline.size() > 0)
 			{
-				Pipe:: EditPipe(SelectPipe(pipeline));
+				SelectPipe(pipeline).EditPipe();
 			}
 			else cout << "Before editing pipe you should INPUT pipe" << endl;
 			break;
