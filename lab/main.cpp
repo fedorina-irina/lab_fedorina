@@ -392,6 +392,51 @@ void TopologicalSort(unordered_map<int, Pipe>& pipeline, unordered_map<int, CSta
 			edges.push_back(p.first);
 	}
 
+	vector <int> markedtops;          //пройденные вершины
+	vector <int> markededges;         //удаленные ребра
+	for (auto& cs : tops)
+	{
+		if (CSSistem[cs].STzahoda == 0 && CSSistem[cs].STishoda != 0)
+		{
+			for (auto& p : edges)
+			{
+				if (pipeline[p].CSidOUT == cs)
+				{
+					markededges.push_back(p);
+				}
+			}
+			for (const auto& p : markededges)
+			{
+				pipeline[p].CSidIN = 0;
+				pipeline[p].CSidOUT = 0;
+				CSSistem[pipeline[p].CSidIN].STzahoda -= 1;
+				CSSistem[pipeline[p].CSidOUT].STishoda -= 1;
+				edges.erase(find(edges.begin(), edges.end(), p));
+			}
+			markedtops.push_back(cs);
+		}
+	}
+
+	vector <int> sorted;
+	for (const auto& cs : markedtops)
+	{
+		sorted.push_back(cs);
+		tops.erase(find(tops.begin(), tops.end(), cs));
+	}
+
+	if (tops.empty())
+	{
+		cout << "Graf has sorted" << endl
+			<< "Topological Sort: " << endl;
+		for (const auto cs : sorted)
+		{
+			cout << cs << endl;
+		}
+	}
+	else
+	{
+		cout << "ERROR!";
+	}
 }
 
 int main()
@@ -638,8 +683,8 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			cout << "Choose: [1] - to connect CSs with pipes; [2] - to show connections; [3] - to disconnect CSs with pipes: \n";
-			switch (GetCorrectNumber(1, 3))
+			cout << "Choose:\n [1] - to connect CSs with pipes;\n [2] - to show connections;\n [3] - to disconnect CSs with pipes;\n [4] - topological sort: \n";
+			switch (GetCorrectNumber(1, 4))
 			{
 			case 1:
 			{
@@ -660,6 +705,13 @@ int main()
 				cin.clear();
 				system("cls");
 				Disconnect(pipeline, CSSistem);
+				break;
+			}
+			case 4:
+			{
+				cin.clear();
+				system("cls");
+				TopologicalSort(pipeline, CSSistem);
 				break;
 			}
 			}
