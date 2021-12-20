@@ -377,6 +377,23 @@ void Disconnect(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>
 		cout << "Trere is no pipe";
 }
 
+void TopologicalSort(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>& CSSistem)
+{
+	vector <int> tops;          //вершины графа
+	vector <int> edges;         //ребра графа
+	for (auto& cs : CSSistem)
+	{
+		if (cs.second.STishoda != 0 || cs.second.STzahoda != 0)
+			tops.push_back(cs.first);
+	}
+	for (auto& p : pipeline)
+	{
+		if (p.second.CSidIN != 0)
+			edges.push_back(p.first);
+	}
+
+}
+
 int main()
 {
 	unordered_map <int, Pipe> pipeline = {};
