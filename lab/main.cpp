@@ -367,18 +367,80 @@ void Disconnect(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>
 		}
 		else
 		{
-			pipeline[IDpipeDisconnect].CSidIN = 0;
-			pipeline[IDpipeDisconnect].CSidOUT = 0;
 			CSSistem[pipeline[IDpipeDisconnect].CSidIN].STzahoda -= 1;
 			CSSistem[pipeline[IDpipeDisconnect].CSidOUT].STishoda -= 1;
+			pipeline[IDpipeDisconnect].CSidIN = 0;
+			pipeline[IDpipeDisconnect].CSidOUT = 0;
 		}
 	}
 	else
 		cout << "Trere is no pipe";
 }
 
-void TopologicalSort(unordered_map<int, Pipe>& pipeline, unordered_map<int, CStation>& CSSistem)
+void sort(unordered_map<int, Pipe> pipeline, unordered_map<int, CStation> CSSistem, vector<int>& tops, vector<int>& edges, vector <int>& result)
 {
+	int cycleschet = 0;
+	int deletedpoints = 0;
+
+	vector <int> markedtops;          //пройденные вершины
+	vector <int> markededges;         //удаленные ребра
+	markedtops.clear();
+
+	bool flag;
+
+	for (auto& cs : tops)
+	{
+		flag = false;
+		markededges.clear();
+		if (CSSistem[cs].STzahoda == 0 && CSSistem[cs].STishoda != 0)
+		{
+			for (auto& p : edges)
+			{
+				if (pipeline[p].CSidOUT == cs)
+				{
+					markededges.push_back(p);
+				}
+			}
+			flag = true;
+			for (const auto& p : markededges)
+			{
+				CSSistem[pipeline[p].CSidIN].STzahoda -= 1;
+				CSSistem[pipeline[p].CSidOUT].STishoda -= 1;
+				pipeline[p].CSidIN = 0;
+				pipeline[p].CSidOUT = 0;
+				edges.erase(find(edges.begin(), edges.end(), p));
+			}
+			deletedpoints += 1;
+			markedtops.push_back(cs);
+		}
+		if (CSSistem[cs].STzahoda != 0 && CSSistem[cs].STishoda != 0)
+		{
+			cycleschet += 1;
+		}
+		if (CSSistem[cs].STzahoda == 0 && CSSistem[cs].STishoda == 0 && flag == false)
+		{
+			markedtops.push_back(cs);
+		}
+	}
+	for (const auto& cs : markedtops)
+	{
+		result.push_back(cs);
+		tops.erase(std::find(tops.begin(), tops.end(), cs));
+	}
+	if (deletedpoints == 0 || cycleschet == size(tops))
+	{
+		return;
+	}
+	if (tops.empty())
+	{
+		return;
+	}
+	sort(pipeline, CSSistem, tops, edges, result);	
+}
+
+void TopologicalSort(unordered_map<int, Pipe> pipeline, unordered_map<int, CStation>& CSSistem)
+{
+	vector <int> result;
 	vector <int> tops;          //вершины графа
 	vector <int> edges;         //ребра графа
 	for (auto& cs : CSSistem)
@@ -392,50 +454,20 @@ void TopologicalSort(unordered_map<int, Pipe>& pipeline, unordered_map<int, CSta
 			edges.push_back(p.first);
 	}
 
-	vector <int> markedtops;          //пройденные вершины
-	vector <int> markededges;         //удаленные ребра
-	for (auto& cs : tops)
+	int check = size(edges);
+	sort(pipeline, CSSistem, tops, edges, result);
+	if (!result.empty() && check == size(result))
 	{
-		if (CSSistem[cs].STzahoda == 0 && CSSistem[cs].STishoda != 0)
-		{
-			for (auto& p : edges)
-			{
-				if (pipeline[p].CSidOUT == cs)
-				{
-					markededges.push_back(p);
-				}
-			}
-			for (const auto& p : markededges)
-			{
-				pipeline[p].CSidIN = 0;
-				pipeline[p].CSidOUT = 0;
-				CSSistem[pipeline[p].CSidIN].STzahoda -= 1;
-				CSSistem[pipeline[p].CSidOUT].STishoda -= 1;
-				edges.erase(find(edges.begin(), edges.end(), p));
-			}
-			markedtops.push_back(cs);
-		}
-	}
-
-	vector <int> sorted;
-	for (const auto& cs : markedtops)
-	{
-		sorted.push_back(cs);
-		tops.erase(find(tops.begin(), tops.end(), cs));
-	}
-
-	if (tops.empty())
-	{
-		cout << "Graf has sorted" << endl
+		std::cout << "Graf was sorted" << endl
 			<< "Topological Sort: " << endl;
-		for (const auto cs : sorted)
+		for (const auto cs : result)
 		{
-			cout << cs << endl;
+			std::cout << cs << endl;
 		}
 	}
 	else
 	{
-		cout << "ERROR!";
+		std::cout << "ERROR! Can't sort because of cycle";
 	}
 }
 
