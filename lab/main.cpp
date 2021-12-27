@@ -471,6 +471,33 @@ void TopologicalSort(unordered_map<int, Pipe> pipeline, unordered_map<int, CStat
 	}
 }
 
+/////////////// lab4
+
+void ShortestWay(unordered_map<int, Pipe> pipeline, unordered_map<int, CStation> CSSistem)
+{
+	//int S = CheckCS(CSSistem, "Enter the id of compressor station which you want to find a way FROM: ", "There is no compressor station with this id! Try again!", "This compressor station is't connected! Try again!");
+	//int T = CheckCS(CSSistem, "Enter the id of compressor station which you want to find a way TO: ", "There is no compressor station with this id! Try again!", "This compressor station is't connected! Try again!");
+
+	vector <int> Graf;
+	for (auto& cs : CSSistem)
+	{
+		if (cs.second.STishoda != 0 || cs.second.STzahoda != 0)
+			Graf.push_back(cs.first);
+	}
+
+	vector <vector <int>> Weight;
+	Weight.assign(Graf.size(), {});
+	for (int i = 0; i < Graf.size(); i++)
+	{
+		Weight[i].assign(Graf.size(), INT_MAX);
+		Weight[i][i] = 0;
+	}
+	for (const auto& [i, p] : pipeline)
+		if (p.CSidIN != 0)
+			Weight[Graf[p.CSidOUT - 1] - 1][Graf[p.CSidIN - 1] - 1] = p.lenghtPipe;
+
+}
+
 int main()
 {
 	unordered_map <int, Pipe> pipeline = {};
@@ -479,7 +506,7 @@ int main()
 	while (1)
 	{
 		PrintMenu();
-		switch (GetCorrectNumber(0, 12))
+		switch (GetCorrectNumber(0, 13))
 		{
 		case 1:
 		{
@@ -747,6 +774,13 @@ int main()
 				break;
 			}
 			}
+			break;
+		}
+		case 13:
+		{
+			cin.clear();
+			system("cls");
+			ShortestWay(pipeline, CSSistem);
 			break;
 		}
 		case 0:
