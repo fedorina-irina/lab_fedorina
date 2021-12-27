@@ -151,7 +151,9 @@ void DeletePipe(unordered_map<int, Pipe>& p)
 		int id = GetCorrectNumber<uint64_t>(1, Pipe::MaxIDpipe);
 		if (p.count(id) == 0)
 			cout << "ERROR! There is no pipe with this id\n";
-		p.erase(id);
+		else if (p[id].CSidIN != 0)
+			cout << "ERROR! This pipe is working!";
+		else p.erase(id);
 		break;
 	}
 	case 2:
@@ -248,6 +250,8 @@ void DeleteStation(unordered_map<int, CStation>& cs)
 	int id = GetCorrectNumber<uint64_t>(1, CStation::MaxIDcs);
 	if (cs.count(id) == 0)
 		cout << "ERROR! There is no compressor station with this id\n";
+	else if (cs[id].STishoda != 0 || cs[id].STzahoda != 0)
+		cout << "ERROR! This station is working!";
 	else
 		cs.erase(id);
 }
@@ -427,18 +431,14 @@ void sort(unordered_map<int, Pipe> pipeline, unordered_map<int, CStation> CSSist
 		result.push_back(cs);
 		tops.erase(std::find(tops.begin(), tops.end(), cs));
 	}
-	if (deletedpoints == 0 || cycleschet == size(tops))
-	{
-		return;
-	}
-	if (tops.empty())
+	if (deletedpoints == 0 || cycleschet == size(tops) || tops.empty())
 	{
 		return;
 	}
 	sort(pipeline, CSSistem, tops, edges, result);	
 }
 
-void TopologicalSort(unordered_map<int, Pipe> pipeline, unordered_map<int, CStation>& CSSistem)
+void TopologicalSort(unordered_map<int, Pipe> pipeline, unordered_map<int, CStation> CSSistem)
 {
 	vector <int> result;
 	vector <int> tops;          //вершины графа
@@ -454,7 +454,7 @@ void TopologicalSort(unordered_map<int, Pipe> pipeline, unordered_map<int, CStat
 			edges.push_back(p.first);
 	}
 
-	int check = size(edges);
+	int check = size(tops);
 	sort(pipeline, CSSistem, tops, edges, result);
 	if (!result.empty() && check == size(result))
 	{
