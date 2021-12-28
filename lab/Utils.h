@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <unordered_map>
+#include "CStation.h"
 
 template <typename T>
 T GetCorrectNumber(T min, T max)
@@ -34,38 +35,3 @@ int Proverka(std::unordered_map<int, T>& map ,std::string textIN, std::string te
 
 	return x;
 }
-
-
-//int CheckPipe(std::unordered_map<int, Pipe>& pipeline, std::string textIN, std::string textError1, std::string textError2)
-//{
-//	int x;
-//	std::cout << textIN;
-//	while (pipeline.count(x) == 0 || pipeline[x].CSidIN == 0)
-//	{
-//		std::cin.clear();
-//		std::cin.ignore(10000, '\n');
-//		if (pipeline.count(x) == 0)
-//			std::cout << textError1 << "\n";
-//		if (pipeline[x].CSidIN == 0)
-//			std::cout << textError2 <<"\n";
-//	}
-//
-//	return x;
-//}
-
-//int CheckCS(unordered_map<int, CStation>& CSSistem, string textIN, string textError1, string textError2)
-//{
-//	int x;
-//	std::cout << textIN;
-//	while (CSSistem.count(x) == 0 || (CSSistem[x].STishoda == 0 && CSSistem[x].STzahoda == 0))
-//	{
-//		std::cin.clear();
-//		std::cin.ignore(10000, '\n');
-//		if (CSSistem.count(x) == 0)
-//			std::cout << textError1 << "\n";
-//		if (CSSistem[x].STishoda == 0 && CSSistem[x].STzahoda == 0)
-//			std::cout << textError2 << "\n";
-//	}
-//
-//	return x;
-//}

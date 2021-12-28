@@ -473,29 +473,94 @@ void TopologicalSort(unordered_map<int, Pipe> pipeline, unordered_map<int, CStat
 
 /////////////// lab4
 
-void ShortestWay(unordered_map<int, Pipe> pipeline, unordered_map<int, CStation> CSSistem)
+void ShortestWay(unordered_map<int, Pipe> pipeline, int IDout, int IDin, vector <int> tops)
 {
-	//int S = CheckCS(CSSistem, "Enter the id of compressor station which you want to find a way FROM: ", "There is no compressor station with this id! Try again!", "This compressor station is't connected! Try again!");
-	//int T = CheckCS(CSSistem, "Enter the id of compressor station which you want to find a way TO: ", "There is no compressor station with this id! Try again!", "This compressor station is't connected! Try again!");
+	const int SIZE = tops.size();
+	vector<int> resultPath;
+	vector<vector<int>> a; //матрица связей
+	a.resize(SIZE);
+	vector<int> d;         //миниммальное расстояние
+	d.resize(SIZE);
+	vector<int> v;         //посещенные вершины
+	v.resize(SIZE);
+	unordered_map<int, int> mapIdIndex;
+	int temp, min;
+	int minindex;
+	int counter = 0;
+	for (const auto& cs : tops)
+		mapIdIndex.emplace(cs, counter++);
+	for (int i = 0; i < SIZE; i++)
+		a[i].resize(SIZE);
 
-	vector <int> Graf;
-	for (auto& cs : CSSistem)
+	for (auto& pipe : pipeline)
+		a[mapIdIndex[pipe.second.CSidOUT]][mapIdIndex[pipe.second.CSidIN]] = pipe.second.lenghtPipe;
+	for (int i = 0; i < SIZE; i++)
 	{
-		if (cs.second.STishoda != 0 || cs.second.STzahoda != 0)
-			Graf.push_back(cs.first);
+		d[i] = 10000;
+		v[i] = 1;
 	}
+	int begin_index = mapIdIndex[IDout];
+	d[begin_index] = 0;
 
-	vector <vector <int>> Weight;
-	Weight.assign(Graf.size(), {});
-	for (int i = 0; i < Graf.size(); i++)
+	do {
+		minindex = 10000;
+		min = 10000;
+		for (int i = 0; i < SIZE; i++)
+		{
+			if ((v[i] == 1) && (d[i] < min))
+			{
+				min = d[i];
+				minindex = i;
+			}
+		}
+		if (minindex != 10000)
+		{
+			for (int i = 0; i < SIZE; i++)
+			{
+				if (a[minindex][i] > 0)
+				{
+					temp = min + a[minindex][i];
+					if (temp < d[i])
+					{
+						d[i] = temp;
+					}
+				}
+			}
+			v[minindex] = 0;
+		}
+	} while (minindex < 10000);
+	if (d[mapIdIndex[IDin]] == 10000)
+		throw - 1;
+	int WAY = d[mapIdIndex[IDin]];
+	vector<int> ver;
+	int end = mapIdIndex[IDin];
+	ver.push_back(end);
+	int weight = d[end];
+	while (end != begin_index)
 	{
-		Weight[i].assign(Graf.size(), INT_MAX);
-		Weight[i][i] = 0;
+		for (int i = 0; i < SIZE; i++)
+			if (a[i][end] != 0)
+			{
+				int temp = weight - a[i][end];
+				if (temp == d[i])
+				{
+					weight = temp;
+					end = i;
+					ver.push_back(i);
+				}
+			}
 	}
-	for (const auto& [i, p] : pipeline)
-		if (p.CSidIN != 0)
-			Weight[Graf[p.CSidOUT - 1] - 1][Graf[p.CSidIN - 1] - 1] = p.lenghtPipe;
-
+	for (int i = 0; i < ver.size(); i++)
+	{
+		for (const auto& el : mapIdIndex)
+			if (el.second == ver[i])
+				resultPath.push_back(el.first);
+	}
+	std::reverse(resultPath.begin(), resultPath.end());
+	
+	cout << "The shortest way: " << WAY << '\n';
+	for (const auto& id : resultPath)
+		cout << "-" << id << "-";
 }
 
 int main()
@@ -780,7 +845,24 @@ int main()
 		{
 			cin.clear();
 			system("cls");
-			ShortestWay(pipeline, CSSistem);
+			cout << "Enter the id of compressor station which you want to find a way FROM: ";
+			int S = GetCorrectNumber(1, CStation::MaxIDcs);
+			cout << "Enter the id of compressor station which you want to find a way TO: ";
+			int T = GetCorrectNumber(1, CStation::MaxIDcs);
+			vector <int> tops;
+			for (auto& cs : CSSistem)
+			{
+				if (cs.second.STishoda != 0 || cs.second.STzahoda != 0)
+					tops.push_back(cs.first);
+			}
+			try
+			{
+				ShortestWay(pipeline, S, T, tops);
+			}
+			catch (int)
+			{
+				cout << "There is no way from " << S << " to " << T;
+			}
 			break;
 		}
 		case 0:
