@@ -487,14 +487,16 @@ void ShortestWay(unordered_map<int, Pipe> pipeline, int IDout, int IDin, vector 
 	int temp, min;
 	int minindex;
 	int counter = 0;
+	
 	for (const auto& cs : tops)
 		mapIdIndex.emplace(cs, counter++);
-	for (int i = 0; i < SIZE; i++)
+	
+	for (int i = 0; i < SIZE; i++)  //матрица связей
 		a[i].resize(SIZE);
-
 	for (auto& pipe : pipeline)
 		a[mapIdIndex[pipe.second.CSidOUT]][mapIdIndex[pipe.second.CSidIN]] = pipe.second.lenghtPipe;
-	for (int i = 0; i < SIZE; i++)
+
+	for (int i = 0; i < SIZE; i++)  //Инициализация вершин и расстояний
 	{
 		d[i] = 10000;
 		v[i] = 1;
@@ -502,17 +504,19 @@ void ShortestWay(unordered_map<int, Pipe> pipeline, int IDout, int IDin, vector 
 	int begin_index = mapIdIndex[IDout];
 	d[begin_index] = 0;
 
+	// Шаг алгоритма
 	do {
 		minindex = 10000;
 		min = 10000;
 		for (int i = 0; i < SIZE; i++)
 		{
-			if ((v[i] == 1) && (d[i] < min))
+			if ((v[i] == 1) && (d[i] < min))    // Если вершину ещё не обошли и вес меньше min, то переприсваиваем значения
 			{
 				min = d[i];
 				minindex = i;
 			}
 		}
+		// Добавляем найденный минимальный вес к текущему весу вершины и сравниваем с текущим минимальным весом вершины
 		if (minindex != 10000)
 		{
 			for (int i = 0; i < SIZE; i++)
@@ -532,29 +536,31 @@ void ShortestWay(unordered_map<int, Pipe> pipeline, int IDout, int IDin, vector 
 	if (d[mapIdIndex[IDin]] == 10000)
 		throw - 1;
 	int WAY = d[mapIdIndex[IDin]];
-	vector<int> ver;
+	vector<int> ver;                            // массив посещенных вершин
 	int end = mapIdIndex[IDin];
 	ver.push_back(end);
-	int weight = d[end];
-	while (end != begin_index)
+	int weight = d[end];                        // вес конечной вершины
+	while (end != begin_index)                  // пока не дошли до начальной вершины
 	{
-		for (int i = 0; i < SIZE; i++)
-			if (a[i][end] != 0)
+		for (int i = 0; i < SIZE; i++)          // просматриваем все вершины
+			if (a[i][end] != 0)                 // если связь есть
 			{
-				int temp = weight - a[i][end];
-				if (temp == d[i])
+				int temp = weight - a[i][end];  // определяем вес пути из предыдущей вершины
+				if (temp == d[i])               // если вес совпал с рассчитанным, значит из этой вершины и был переход
 				{
-					weight = temp;
-					end = i;
-					ver.push_back(i);
+					weight = temp;              // сохраняем новый вес
+					end = i;                    // сохраняем предыдущую вершину
+					ver.push_back(i);           // и записываем ее в массив
 				}
 			}
 	}
+
+	// Вывод пути
 	for (int i = 0; i < ver.size(); i++)
 	{
-		for (const auto& el : mapIdIndex)
-			if (el.second == ver[i])
-				resultPath.push_back(el.first);
+		for (const auto& id : mapIdIndex)
+			if (id.second == ver[i])
+				resultPath.push_back(id.first);
 	}
 	std::reverse(resultPath.begin(), resultPath.end());
 	
@@ -845,10 +851,31 @@ int main()
 		{
 			cin.clear();
 			system("cls");
+
+			int S;
 			cout << "Enter the id of compressor station which you want to find a way FROM: ";
-			int S = GetCorrectNumber(1, CStation::MaxIDcs);
+			while ((cin >> S).fail() || CSSistem.count(S) == 0 || CSSistem[S].STishoda == 0)
+			{
+				cin.clear();
+				cin.ignore(10000, '\n');
+				if (CSSistem.count(S) == 0)
+					cout << "ERROR! There is no object with this id\n Try again!\n";
+				else if (CSSistem[S].STishoda == 0)
+					cout << "ERROR! There is no ways from this CS\n Try again!\n";
+			}
+
+			int T;
 			cout << "Enter the id of compressor station which you want to find a way TO: ";
-			int T = GetCorrectNumber(1, CStation::MaxIDcs);
+			while ((cin >> T).fail() || CSSistem.count(S) == 0 || CSSistem[S].STzahoda == 0)
+			{
+				cin.clear();
+				cin.ignore(10000, '\n');
+				if (CSSistem.count(S) == 0)
+					cout << "ERROR! There is no object with this id\n Try again!\n";
+				else if (CSSistem[S].STzahoda == 0)
+					cout << "ERROR! There is no ways to this CS\n Try again!\n";
+			}
+
 			vector <int> tops;
 			for (auto& cs : CSSistem)
 			{
